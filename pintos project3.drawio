@@ -1,6 +1,6 @@
-<mxfile host="app.diagrams.net" modified="2023-01-08T13:21:24.706Z" agent="5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36" etag="9f5o1ms-ldo8xbZtFZ6j" version="20.8.3" type="github" pages="3">
+<mxfile host="app.diagrams.net" modified="2023-01-08T13:57:00.297Z" agent="5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36" etag="5YAyEkdXYC85jFCw_aq6" version="20.8.3" type="github" pages="3">
   <diagram id="esIEkL9ELhrgGPxcgCet" name="Hash table">
-    <mxGraphModel dx="2179" dy="2512" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+    <mxGraphModel dx="2680" dy="1829" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -226,41 +226,41 @@
         <mxCell id="l3z0vZk599ucMZhZUDQ2-74" value="index of array" style="rounded=1;whiteSpace=wrap;html=1;strokeColor=none;fillColor=#F2F2F2;" parent="1" vertex="1">
           <mxGeometry x="-336" y="-110" width="113" height="28" as="geometry" />
         </mxCell>
-        <mxCell id="s-FUQvxFGNbQpUwxHARp-1" value="&lt;b&gt;&lt;font style=&quot;font-size: 18px;&quot;&gt;struct page&lt;/font&gt;&lt;/b&gt;" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=42;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;fontSize=12;swimlaneLine=1;rotation=0;swimlaneHead=1;swimlaneBody=1;arcSize=15;noLabel=0;overflow=width;connectable=1;dropTarget=1;expand=1;autosize=1;resizeHeight=1;enumerate=0;comic=0;treeFolding=0;deletable=1;cloneable=1;container=0;movable=1;resizable=1;rotatable=1;editable=1;fillColor=#FFCFCF;" vertex="1" parent="1">
+        <mxCell id="s-FUQvxFGNbQpUwxHARp-1" value="&lt;b&gt;&lt;font style=&quot;font-size: 18px;&quot;&gt;struct page&lt;/font&gt;&lt;/b&gt;" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=42;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;fontSize=12;swimlaneLine=1;rotation=0;swimlaneHead=1;swimlaneBody=1;arcSize=15;noLabel=0;overflow=width;connectable=1;dropTarget=1;expand=1;autosize=1;resizeHeight=1;enumerate=0;comic=0;treeFolding=0;deletable=1;cloneable=1;container=0;movable=1;resizable=1;rotatable=1;editable=1;fillColor=#FFCFCF;" parent="1" vertex="1">
           <mxGeometry x="-759" y="628" width="241" height="180" as="geometry" />
         </mxCell>
-        <mxCell id="s-FUQvxFGNbQpUwxHARp-2" value="&lt;font style=&quot;font-size: 14px;&quot;&gt;&lt;font color=&quot;#b3b3b3&quot;&gt;void&lt;/font&gt;&amp;nbsp;*va&lt;/font&gt;&lt;br&gt;&lt;font color=&quot;#999999&quot;&gt;/*address in terms of user space*/&lt;/font&gt;" style="text;strokeColor=default;fillColor=none;align=center;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=width;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=12;resizeWidth=0;autosize=1;absoluteArcSize=0;part=0;backgroundOutline=0;labelPosition=center;verticalLabelPosition=middle;textDirection=ltr;strokeWidth=0.5;" vertex="1" parent="s-FUQvxFGNbQpUwxHARp-1">
+        <mxCell id="s-FUQvxFGNbQpUwxHARp-2" value="&lt;font style=&quot;font-size: 14px;&quot;&gt;&lt;font color=&quot;#b3b3b3&quot;&gt;void&lt;/font&gt;&amp;nbsp;*va&lt;/font&gt;&lt;br&gt;&lt;font color=&quot;#999999&quot;&gt;/*address in terms of user space*/&lt;/font&gt;" style="text;strokeColor=default;fillColor=none;align=center;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=width;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=12;resizeWidth=0;autosize=1;absoluteArcSize=0;part=0;backgroundOutline=0;labelPosition=center;verticalLabelPosition=middle;textDirection=ltr;strokeWidth=0.5;" parent="s-FUQvxFGNbQpUwxHARp-1" vertex="1">
           <mxGeometry y="42" width="241" height="43" as="geometry" />
         </mxCell>
-        <mxCell id="s-FUQvxFGNbQpUwxHARp-4" value="&lt;font style=&quot;font-size: 14px;&quot;&gt;&lt;font style=&quot;font-size: 14px;&quot; color=&quot;#00d423&quot;&gt;struct hash_elem&lt;/font&gt;&amp;nbsp;hash_elem&lt;/font&gt;&lt;br&gt;&lt;font color=&quot;#999999&quot;&gt;/*gitbook 참고해서 추가함*/&lt;/font&gt;" style="text;strokeColor=default;fillColor=none;align=center;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=width;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=12;autosize=1;strokeWidth=0.5;" vertex="1" parent="s-FUQvxFGNbQpUwxHARp-1">
+        <mxCell id="s-FUQvxFGNbQpUwxHARp-4" value="&lt;font style=&quot;font-size: 14px;&quot;&gt;&lt;font style=&quot;font-size: 14px;&quot; color=&quot;#00d423&quot;&gt;struct hash_elem&lt;/font&gt;&amp;nbsp;hash_elem&lt;/font&gt;&lt;br&gt;&lt;font color=&quot;#999999&quot;&gt;/*gitbook 참고해서 추가함*/&lt;/font&gt;" style="text;strokeColor=default;fillColor=none;align=center;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=width;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=12;autosize=1;strokeWidth=0.5;" parent="s-FUQvxFGNbQpUwxHARp-1" vertex="1">
           <mxGeometry y="85" width="241" height="43" as="geometry" />
         </mxCell>
-        <mxCell id="s-FUQvxFGNbQpUwxHARp-7" value="&lt;font style=&quot;font-size: 14px;&quot;&gt;&lt;font color=&quot;#6b6b6b&quot;&gt;const struct page_operations&lt;/font&gt;&amp;nbsp;*operations&lt;/font&gt;&lt;br&gt;" style="text;strokeColor=default;fillColor=none;align=center;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=width;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=12;autosize=1;strokeWidth=0.5;" vertex="1" parent="s-FUQvxFGNbQpUwxHARp-1">
+        <mxCell id="s-FUQvxFGNbQpUwxHARp-7" value="&lt;font style=&quot;font-size: 14px;&quot;&gt;&lt;font color=&quot;#6b6b6b&quot;&gt;const struct page_operations&lt;/font&gt;&amp;nbsp;*operations&lt;/font&gt;&lt;br&gt;" style="text;strokeColor=default;fillColor=none;align=center;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=width;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=12;autosize=1;strokeWidth=0.5;" parent="s-FUQvxFGNbQpUwxHARp-1" vertex="1">
           <mxGeometry y="128" width="241" height="52" as="geometry" />
         </mxCell>
-        <mxCell id="s-FUQvxFGNbQpUwxHARp-8" value="hash_entry&amp;nbsp;" style="text;strokeColor=none;fillColor=#FFCFCF;align=center;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=width;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=12;rounded=1;fontStyle=1" vertex="1" parent="1">
+        <mxCell id="s-FUQvxFGNbQpUwxHARp-8" value="hash_entry&amp;nbsp;" style="text;strokeColor=none;fillColor=#FFCFCF;align=center;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=width;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=12;rounded=1;fontStyle=1" parent="1" vertex="1">
           <mxGeometry x="-478" y="719" width="113" height="30" as="geometry" />
         </mxCell>
-        <mxCell id="s-FUQvxFGNbQpUwxHARp-9" value="" style="endArrow=classic;html=1;rounded=0;fontColor=#B3B3B3;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" target="s-FUQvxFGNbQpUwxHARp-8">
+        <mxCell id="s-FUQvxFGNbQpUwxHARp-9" value="" style="endArrow=classic;html=1;rounded=0;fontColor=#B3B3B3;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" target="s-FUQvxFGNbQpUwxHARp-8" edge="1">
           <mxGeometry width="50" height="50" relative="1" as="geometry">
             <mxPoint x="-518" y="734" as="sourcePoint" />
             <mxPoint x="-468" y="684" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="s-FUQvxFGNbQpUwxHARp-11" value="" style="endArrow=classic;html=1;rounded=0;fontColor=#B3B3B3;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" edge="1" parent="1" source="s-FUQvxFGNbQpUwxHARp-8">
+        <mxCell id="s-FUQvxFGNbQpUwxHARp-11" value="" style="endArrow=classic;html=1;rounded=0;fontColor=#B3B3B3;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" parent="1" source="s-FUQvxFGNbQpUwxHARp-8" edge="1">
           <mxGeometry width="50" height="50" relative="1" as="geometry">
             <mxPoint x="-481" y="688" as="sourcePoint" />
             <mxPoint x="-326" y="734" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="s-FUQvxFGNbQpUwxHARp-12" value="page" style="rounded=1;whiteSpace=wrap;html=1;strokeColor=none;fillColor=#F2F2F2;" vertex="1" parent="1">
+        <mxCell id="s-FUQvxFGNbQpUwxHARp-12" value="page" style="rounded=1;whiteSpace=wrap;html=1;strokeColor=none;fillColor=#F2F2F2;" parent="1" vertex="1">
           <mxGeometry x="-325" y="719" width="113" height="28" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
   </diagram>
   <diagram id="1vaX8HIadDButvGlY2Hd" name="Lazy Loading">
-    <mxGraphModel grid="0" page="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+    <mxGraphModel dx="2680" dy="2998" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -310,7 +310,7 @@
           <mxGeometry x="-436" y="-1849" width="558" height="30" as="geometry" />
         </mxCell>
         <mxCell id="M0-szCYtgWFVNaAdtsh0-16" value="&lt;p style=&quot;line-height: 97%;&quot;&gt;&lt;b&gt;&lt;font color=&quot;#1165d4&quot; style=&quot;font-size: 18px;&quot;&gt;bool&lt;/font&gt;&lt;font color=&quot;#af35b8&quot; style=&quot;font-size: 18px;&quot;&gt; &lt;/font&gt;&lt;font style=&quot;font-size: 18px;&quot;&gt;vm_alloc_page_with_initializer()&lt;/font&gt;&lt;/b&gt;&lt;/p&gt;&lt;p style=&quot;line-height: 97%; font-size: 14px;&quot;&gt;&lt;font color=&quot;#4d4d4d&quot;&gt;/*create the pending page object with initializer (uninit page -&amp;gt; &#39;type&#39; page)&lt;/font&gt;&lt;span style=&quot;background-color: initial; color: rgb(77, 77, 77);&quot;&gt;*/&lt;/span&gt;&lt;/p&gt;" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=88;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;fontSize=12;swimlaneLine=1;rotation=0;swimlaneHead=1;swimlaneBody=1;arcSize=15;noLabel=0;overflow=fill;connectable=1;dropTarget=1;expand=1;autosize=1;resizeHeight=1;enumerate=0;comic=0;treeFolding=0;deletable=1;cloneable=1;container=0;movable=1;resizable=1;rotatable=1;editable=1;fillColor=#E5CCFF;" parent="1" vertex="1">
-          <mxGeometry x="-81" y="-1542" width="329" height="303" as="geometry" />
+          <mxGeometry x="-81" y="-1542" width="329" height="261" as="geometry" />
         </mxCell>
         <mxCell id="M0-szCYtgWFVNaAdtsh0-17" value="&lt;font style=&quot;font-size: 14px;&quot;&gt;&lt;font color=&quot;#ffa245&quot;&gt;enum&amp;nbsp;vm_type&lt;/font&gt; type&lt;br&gt;&lt;span style=&quot;color: rgb(153, 153, 153); font-size: 12px;&quot;&gt;/*page type*/&lt;/span&gt;&lt;br&gt;&lt;/font&gt;" style="text;strokeColor=default;fillColor=none;align=center;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=width;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=12;autosize=1;strokeWidth=0.5;" parent="M0-szCYtgWFVNaAdtsh0-16" vertex="1">
           <mxGeometry y="88" width="329" height="46" as="geometry" />
@@ -318,14 +318,14 @@
         <mxCell id="M0-szCYtgWFVNaAdtsh0-18" value="&lt;font style=&quot;font-size: 14px;&quot;&gt;&lt;font color=&quot;#4d4d4d&quot;&gt;void&lt;/font&gt;&amp;nbsp;*upage&lt;/font&gt;&lt;br&gt;&lt;font color=&quot;#999999&quot;&gt;/*user virtual address*/&lt;/font&gt;" style="text;strokeColor=default;fillColor=none;align=center;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=width;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=12;autosize=1;strokeWidth=0.5;" parent="M0-szCYtgWFVNaAdtsh0-16" vertex="1">
           <mxGeometry y="134" width="329" height="40" as="geometry" />
         </mxCell>
-        <mxCell id="M0-szCYtgWFVNaAdtsh0-19" value="&lt;font style=&quot;font-size: 14px;&quot;&gt;&lt;font color=&quot;#1165d4&quot;&gt;bool&lt;/font&gt;&amp;nbsp;writable&lt;/font&gt;&lt;br&gt;&lt;font color=&quot;#999999&quot;&gt;/*physical address (user pool)*/&lt;/font&gt;" style="text;strokeColor=default;fillColor=none;align=center;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=width;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=12;autosize=1;strokeWidth=0.5;" parent="M0-szCYtgWFVNaAdtsh0-16" vertex="1">
-          <mxGeometry y="174" width="329" height="43" as="geometry" />
+        <mxCell id="M0-szCYtgWFVNaAdtsh0-19" value="&lt;font style=&quot;font-size: 14px;&quot;&gt;&lt;font color=&quot;#1165d4&quot;&gt;bool&lt;/font&gt;&amp;nbsp;writable&lt;/font&gt;" style="text;strokeColor=default;fillColor=none;align=center;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=width;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=12;autosize=1;strokeWidth=0.5;" parent="M0-szCYtgWFVNaAdtsh0-16" vertex="1">
+          <mxGeometry y="174" width="329" height="29" as="geometry" />
         </mxCell>
-        <mxCell id="M0-szCYtgWFVNaAdtsh0-20" value="&lt;font style=&quot;font-size: 14px;&quot;&gt;&lt;font color=&quot;#af35b8&quot;&gt;vm_initializer&lt;/font&gt;&amp;nbsp;*init&lt;/font&gt;&lt;br&gt;&lt;font color=&quot;#999999&quot;&gt;/*read &#39;read_bytes&#39; bytes from file*/&lt;/font&gt;" style="text;strokeColor=default;fillColor=none;align=center;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=width;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=12;autosize=1;strokeWidth=0.5;" parent="M0-szCYtgWFVNaAdtsh0-16" vertex="1">
-          <mxGeometry y="217" width="329" height="43" as="geometry" />
+        <mxCell id="M0-szCYtgWFVNaAdtsh0-20" value="&lt;font style=&quot;font-size: 14px;&quot;&gt;&lt;font color=&quot;#af35b8&quot;&gt;vm_initializer&lt;/font&gt;&amp;nbsp;*init&lt;/font&gt;" style="text;strokeColor=default;fillColor=none;align=center;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=width;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=12;autosize=1;strokeWidth=0.5;" parent="M0-szCYtgWFVNaAdtsh0-16" vertex="1">
+          <mxGeometry y="203" width="329" height="29" as="geometry" />
         </mxCell>
-        <mxCell id="M0-szCYtgWFVNaAdtsh0-21" value="&lt;font style=&quot;font-size: 14px;&quot;&gt;&lt;font color=&quot;#4d4d4d&quot;&gt;void&lt;/font&gt;&lt;font color=&quot;#1165d4&quot;&gt;&amp;nbsp;&lt;/font&gt;*aux&lt;/font&gt;&lt;br&gt;&lt;font color=&quot;#999999&quot;&gt;/*bytes for zeroing*/&lt;/font&gt;" style="text;strokeColor=default;fillColor=none;align=center;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=width;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=12;autosize=1;strokeWidth=0.5;" parent="M0-szCYtgWFVNaAdtsh0-16" vertex="1">
-          <mxGeometry y="260" width="329" height="43" as="geometry" />
+        <mxCell id="M0-szCYtgWFVNaAdtsh0-21" value="&lt;font style=&quot;font-size: 14px;&quot;&gt;&lt;font color=&quot;#4d4d4d&quot;&gt;void&lt;/font&gt;&lt;font color=&quot;#1165d4&quot;&gt;&amp;nbsp;&lt;/font&gt;*aux&lt;/font&gt;" style="text;strokeColor=default;fillColor=none;align=center;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=width;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=12;autosize=1;strokeWidth=0.5;" parent="M0-szCYtgWFVNaAdtsh0-16" vertex="1">
+          <mxGeometry y="232" width="329" height="29" as="geometry" />
         </mxCell>
         <mxCell id="M0-szCYtgWFVNaAdtsh0-22" value="&lt;p style=&quot;line-height: 140%;&quot;&gt;&lt;font color=&quot;#000000&quot;&gt;(1) Check whether the upage is already occupied or not&lt;br&gt;(2) Create the page &amp;amp; fetch the initializer according to the VM type&lt;br&gt;(3) Create &#39;uninit&#39; page struct by calling ⭐️&lt;/font&gt;&lt;font color=&quot;#af35b8&quot;&gt;uninit_new()&lt;/font&gt;&lt;br&gt;&lt;font color=&quot;#000000&quot;&gt;(4) Insert the page into the spt&lt;/font&gt;&lt;br&gt;&lt;/p&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;comic=0;strokeWidth=0.5;fontSize=14;fontColor=#FFA245;overflow=width;autosize=1;" parent="1" vertex="1">
           <mxGeometry x="258" y="-1535" width="427" height="118" as="geometry" />
