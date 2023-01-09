@@ -1,4 +1,4 @@
-<mxfile host="app.diagrams.net" modified="2023-01-09T10:40:57.163Z" agent="5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36" etag="fxZ_faqdihFPQdjrDRWz" version="20.8.3" type="github" pages="3">
+<mxfile host="app.diagrams.net" modified="2023-01-09T10:51:02.227Z" agent="5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36" etag="ZalmIwcgM20uKNVFIUk7" version="20.8.3" type="github" pages="3">
   <diagram id="esIEkL9ELhrgGPxcgCet" name="Hash table">
     <mxGraphModel dx="2680" dy="1829" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
@@ -260,7 +260,7 @@
     </mxGraphModel>
   </diagram>
   <diagram id="1vaX8HIadDButvGlY2Hd" name="Lazy Loading">
-    <mxGraphModel dx="2316" dy="2764" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+    <mxGraphModel dx="2049" dy="2592" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -508,7 +508,7 @@
           <mxGeometry y="145" width="231" height="29" as="geometry" />
         </mxCell>
         <mxCell id="M0-szCYtgWFVNaAdtsh0-61" value="&lt;font color=&quot;#ff0000&quot;&gt;세그먼트들이 각각 다른데 이 정보들은 어디에 있지? 어떻게 세그먼트에 따라 다르게 로드를 하지? 어떤 건 anonymous page일테고 어떤건 file-based page일텐데 이걸 어떻게 구분을 해놓지? &lt;/font&gt;&lt;br&gt;&lt;font color=&quot;#000000&quot;&gt;-&amp;gt; 일단 핀토스에서는 이 시점에서 ANON과 FILE PAGE는 구분하지 않음&amp;nbsp;&lt;br&gt;-&amp;gt; 다만 세그먼트 구분은 아래를 참고&lt;/font&gt;&lt;br&gt;&lt;br&gt;&lt;font color=&quot;#ff0000&quot;&gt;: ELF Header(ehdr) 내 Program Header Table (phdr)에 세그먼트들에 대한 정보가 있고, 그 세그먼트들을 메모리에 어떻게 로드해야 하는지에 대한 정보가 있음 (https://sonseungha.tistory.com/461)&lt;/font&gt;&lt;br&gt;&lt;br&gt;&lt;font color=&quot;#ff0000&quot;&gt;stack segment : setup_stack에서 eagerly load해서 괜찮나?&lt;/font&gt;&lt;br&gt;&lt;font color=&quot;#ff0000&quot;&gt;그럼 heap segment는?&amp;nbsp;&lt;/font&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;comic=0;strokeWidth=0.5;fontSize=14;fontColor=#FF0080;" parent="1" vertex="1">
-          <mxGeometry x="-816" y="-1772" width="369" height="179" as="geometry" />
+          <mxGeometry x="-816" y="-1805" width="369" height="179" as="geometry" />
         </mxCell>
         <mxCell id="M0-szCYtgWFVNaAdtsh0-62" value="그런데 pml4_get_page()로 page 매핑 여부를 가져오면, SPT의 존재 의미가 없어지지 않나?&lt;br&gt;SPT를 쓰는 이유가 페이지의 타입을 알 수 있고, 조금 더 빨리 페이지 할당 여부를 알 수 있어서일텐데...&amp;nbsp;&lt;br&gt;SPT에는 그러면 아직 매핑되지 않았거나, swap out된 애들만 저장해놓는 걸까?&amp;nbsp;&lt;br&gt;&lt;br&gt;테스트 케이스에는 어떻게 되어있을까" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;comic=0;strokeWidth=0.5;fontSize=14;fontColor=#FF0000;" parent="1" vertex="1">
           <mxGeometry x="-1476" y="-487" width="534" height="107" as="geometry" />
@@ -527,6 +527,9 @@
         </mxCell>
         <mxCell id="M0-szCYtgWFVNaAdtsh0-67" value="현재는 load_segment()로 만들어지는 페이지들은 모두 ANON 타입&amp;nbsp;&lt;br&gt;file-backed page의 경우 오직 mmap 시스템콜에 의해서 만들어짐" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;comic=0;strokeWidth=0.5;fontSize=14;fontColor=#FF0080;" parent="1" vertex="1">
           <mxGeometry x="520" y="-1113" width="443" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="amDLQRUaLCyjJiNRUv9k-10" value="ELF 헤더를 읽어들인 후 load_segment와 setup_stack 호출" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;comic=0;strokeWidth=0.5;fontSize=14;fontColor=#FF0080;autosize=1;" vertex="1" parent="1">
+          <mxGeometry x="-816" y="-1577" width="363" height="29" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
