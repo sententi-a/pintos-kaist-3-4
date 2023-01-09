@@ -1,4 +1,4 @@
-<mxfile host="app.diagrams.net" modified="2023-01-08T13:57:00.297Z" agent="5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36" etag="5YAyEkdXYC85jFCw_aq6" version="20.8.3" type="github" pages="3">
+<mxfile host="app.diagrams.net" modified="2023-01-09T04:38:52.570Z" agent="5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36" etag="ZzA5EQxgm_Rv8no1FaEp" version="20.8.3" type="github" pages="3">
   <diagram id="esIEkL9ELhrgGPxcgCet" name="Hash table">
     <mxGraphModel dx="2680" dy="1829" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
@@ -366,8 +366,8 @@
         <mxCell id="M0-szCYtgWFVNaAdtsh0-34" value="왜 vm_claim_page를 안 부르고 vm_do_claim_page를 부를까&amp;nbsp;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;comic=0;strokeWidth=0.5;fontSize=14;fontColor=#FF0000;" parent="1" vertex="1">
           <mxGeometry x="-375" y="-452" width="212" height="31" as="geometry" />
         </mxCell>
-        <mxCell id="M0-szCYtgWFVNaAdtsh0-35" value="mmu를 셋업하라는 건 무슨 의미?&amp;nbsp;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;comic=0;strokeWidth=0.5;fontSize=14;fontColor=#FF0000;" parent="1" vertex="1">
-          <mxGeometry x="-375" y="-416" width="212" height="31" as="geometry" />
+        <mxCell id="M0-szCYtgWFVNaAdtsh0-35" value="mmu를 셋업하라는 건 무슨 의미?&amp;nbsp;&lt;br&gt;:&amp;nbsp;&lt;span style=&quot;color: rgb(133, 133, 133); font-family: &amp;quot;Helvetica Neue&amp;quot;, Helvetica, Arial, sans-serif; font-size: 16px; letter-spacing: 0.2px; orphans: 3; widows: 3; background-color: rgb(255, 255, 255);&quot;&gt;add the mapping from the virtual address to the physical address in the page table.&lt;/span&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;comic=0;strokeWidth=0.5;fontSize=14;fontColor=#FF0000;" parent="1" vertex="1">
+          <mxGeometry x="-375" y="-416" width="212" height="98" as="geometry" />
         </mxCell>
         <mxCell id="M0-szCYtgWFVNaAdtsh0-36" value="&lt;p style=&quot;line-height: 140%;&quot;&gt;&lt;font color=&quot;#000000&quot;&gt;(1) Get a free frame from frame table&lt;br&gt;(2) Set links (frame &amp;lt;-&amp;gt; page)&lt;br&gt;(3) Insert pte to map page&#39;s VA to frame&#39;s PA&lt;br&gt;(4) return swap_in (page, frame-&amp;gt;kva);&lt;br&gt;&lt;/font&gt;&lt;/p&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;comic=0;strokeWidth=0.5;fontSize=14;fontColor=#FFA245;overflow=width;autosize=1;" parent="1" vertex="1">
           <mxGeometry x="-375" y="-557" width="296" height="118" as="geometry" />
