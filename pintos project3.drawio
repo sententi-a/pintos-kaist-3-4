@@ -1,4 +1,4 @@
-<mxfile host="app.diagrams.net" modified="2023-01-09T04:53:05.278Z" agent="5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36" etag="vS3x9boFCGawfTQ0kqAs" version="20.8.3" type="github" pages="3">
+<mxfile host="app.diagrams.net" modified="2023-01-09T05:19:22.191Z" agent="5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36" etag="SDzKeg77N0hdLkVSIl2t" version="20.8.3" type="github" pages="3">
   <diagram id="esIEkL9ELhrgGPxcgCet" name="Hash table">
     <mxGraphModel dx="2680" dy="1829" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
@@ -469,7 +469,7 @@
     </mxGraphModel>
   </diagram>
   <diagram id="P-rp2TBnbMljXpjvk3el" name="MMU PTE">
-    <mxGraphModel dx="1026" dy="660" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+    <mxGraphModel dx="285" dy="183" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -489,13 +489,31 @@
           <mxGeometry x="530" y="486" width="530" height="598" as="geometry" />
         </mxCell>
         <mxCell id="JaTWjFXAx4AlhAbRV5iZ-1" value="&lt;p style=&quot;line-height: 97%;&quot;&gt;&lt;b&gt;&lt;font color=&quot;#4d4d4d&quot; style=&quot;font-size: 18px;&quot;&gt;void&lt;/font&gt;&lt;font style=&quot;font-size: 18px;&quot;&gt;&amp;nbsp;&lt;/font&gt;&lt;font style=&quot;font-size: 18px;&quot;&gt;*pml4_get_page()&lt;/font&gt;&lt;/b&gt;&lt;/p&gt;&lt;p style=&quot;line-height: 97%; font-size: 14px;&quot;&gt;&lt;font color=&quot;#4d4d4d&quot;&gt;/*looks up the physical address that corresponds to user virtual address UADDR in pml4&lt;/font&gt;&lt;/p&gt;&lt;p style=&quot;line-height: 97%; font-size: 14px;&quot;&gt;&lt;span style=&quot;color: rgb(77, 77, 77); background-color: initial;&quot;&gt;return the kernel virtual address corresponding to that physical address*/&lt;/span&gt;&lt;/p&gt;" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=115;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;fontSize=12;swimlaneLine=1;rotation=0;swimlaneHead=1;swimlaneBody=1;arcSize=15;noLabel=0;overflow=fill;connectable=1;dropTarget=1;expand=1;autosize=1;resizeHeight=1;enumerate=0;comic=0;treeFolding=0;deletable=1;cloneable=1;container=0;movable=1;resizable=1;rotatable=1;editable=1;fillColor=#E5CCFF;" vertex="1" parent="1">
-          <mxGeometry x="1100" y="128" width="304" height="204" as="geometry" />
+          <mxGeometry x="1066" y="145" width="304" height="204" as="geometry" />
         </mxCell>
         <mxCell id="JaTWjFXAx4AlhAbRV5iZ-2" value="&lt;font style=&quot;font-size: 14px;&quot;&gt;&lt;font color=&quot;#1165d4&quot;&gt;uint64_t&lt;/font&gt;&amp;nbsp;*pml4&lt;br&gt;&lt;span style=&quot;color: rgb(153, 153, 153); font-size: 12px;&quot;&gt;/*page map level 4*/&lt;/span&gt;&lt;br&gt;&lt;/font&gt;" style="text;strokeColor=default;fillColor=none;align=center;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=width;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=12;autosize=1;strokeWidth=0.5;" vertex="1" parent="JaTWjFXAx4AlhAbRV5iZ-1">
           <mxGeometry y="115" width="304" height="46" as="geometry" />
         </mxCell>
         <mxCell id="JaTWjFXAx4AlhAbRV5iZ-3" value="&lt;font style=&quot;font-size: 14px;&quot;&gt;&lt;font color=&quot;#4d4d4d&quot;&gt;const void&lt;/font&gt; *uaddr&lt;/font&gt;&lt;br&gt;&lt;font color=&quot;#999999&quot;&gt;/*user virtual address*/&lt;/font&gt;" style="text;strokeColor=default;fillColor=none;align=center;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=width;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=12;autosize=1;strokeWidth=0.5;" vertex="1" parent="JaTWjFXAx4AlhAbRV5iZ-1">
           <mxGeometry y="161" width="304" height="43" as="geometry" />
+        </mxCell>
+        <mxCell id="MoCzdRgnpgX8yLKKYgOh-1" value="mmu.c에서 우리가 사용할 함수들" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontColor=#4D4D4D;fontSize=15;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="1064" y="106" width="212" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="MoCzdRgnpgX8yLKKYgOh-2" value="&lt;p style=&quot;line-height: 97%;&quot;&gt;&lt;b&gt;&lt;font color=&quot;#4d4d4d&quot; style=&quot;font-size: 18px;&quot;&gt;void&lt;/font&gt;&lt;font style=&quot;font-size: 18px;&quot;&gt;&amp;nbsp;&lt;/font&gt;&lt;font style=&quot;font-size: 18px;&quot;&gt;*pml4_get_page()&lt;/font&gt;&lt;/b&gt;&lt;/p&gt;&lt;p style=&quot;line-height: 97%; font-size: 14px;&quot;&gt;&lt;font color=&quot;#4d4d4d&quot;&gt;/*looks up the physical address that corresponds to user virtual address UADDR in pml4&lt;/font&gt;&lt;/p&gt;&lt;p style=&quot;line-height: 97%; font-size: 14px;&quot;&gt;&lt;span style=&quot;color: rgb(77, 77, 77); background-color: initial;&quot;&gt;return the kernel virtual address corresponding to that physical address*/&lt;/span&gt;&lt;/p&gt;" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=115;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;fontSize=12;swimlaneLine=1;rotation=0;swimlaneHead=1;swimlaneBody=1;arcSize=15;noLabel=0;overflow=fill;connectable=1;dropTarget=1;expand=1;autosize=1;resizeHeight=1;enumerate=0;comic=0;treeFolding=0;deletable=1;cloneable=1;container=0;movable=1;resizable=1;rotatable=1;editable=1;fillColor=#E5CCFF;" vertex="1" parent="1">
+          <mxGeometry x="1185" y="380" width="304" height="290" as="geometry" />
+        </mxCell>
+        <mxCell id="MoCzdRgnpgX8yLKKYgOh-3" value="&lt;font style=&quot;font-size: 14px;&quot;&gt;&lt;font color=&quot;#1165d4&quot;&gt;uint64_t&lt;/font&gt;&amp;nbsp;*pml4&lt;br&gt;&lt;span style=&quot;color: rgb(153, 153, 153); font-size: 12px;&quot;&gt;/*page map level 4*/&lt;/span&gt;&lt;br&gt;&lt;/font&gt;" style="text;strokeColor=default;fillColor=none;align=center;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=width;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=12;autosize=1;strokeWidth=0.5;" vertex="1" parent="MoCzdRgnpgX8yLKKYgOh-2">
+          <mxGeometry y="115" width="304" height="46" as="geometry" />
+        </mxCell>
+        <mxCell id="MoCzdRgnpgX8yLKKYgOh-4" value="&lt;font style=&quot;font-size: 14px;&quot;&gt;&lt;font color=&quot;#4d4d4d&quot;&gt;void&lt;/font&gt; *upage&lt;/font&gt;&lt;br&gt;&lt;font color=&quot;#999999&quot;&gt;/*user virtual page*/&lt;/font&gt;" style="text;strokeColor=default;fillColor=none;align=center;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=width;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=12;autosize=1;strokeWidth=0.5;" vertex="1" parent="MoCzdRgnpgX8yLKKYgOh-2">
+          <mxGeometry y="161" width="304" height="43" as="geometry" />
+        </mxCell>
+        <mxCell id="MoCzdRgnpgX8yLKKYgOh-5" value="&lt;font style=&quot;font-size: 14px;&quot;&gt;&lt;font color=&quot;#4d4d4d&quot;&gt;void&lt;/font&gt; *kpage&lt;/font&gt;&lt;br&gt;&lt;font color=&quot;#999999&quot;&gt;/*kernel virtual address(physical frame)*/&lt;/font&gt;" style="text;strokeColor=default;fillColor=none;align=center;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=width;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=12;autosize=1;strokeWidth=0.5;" vertex="1" parent="MoCzdRgnpgX8yLKKYgOh-2">
+          <mxGeometry y="204" width="304" height="43" as="geometry" />
+        </mxCell>
+        <mxCell id="MoCzdRgnpgX8yLKKYgOh-6" value="&lt;font style=&quot;font-size: 14px;&quot;&gt;&lt;font color=&quot;#1165d4&quot;&gt;bool&lt;/font&gt;&amp;nbsp;rw&lt;/font&gt;&lt;br&gt;&lt;font color=&quot;#999999&quot;&gt;/*true: read &amp;amp; write, false: read-only*/&lt;/font&gt;" style="text;strokeColor=default;fillColor=none;align=center;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=width;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fontSize=12;autosize=1;strokeWidth=0.5;" vertex="1" parent="MoCzdRgnpgX8yLKKYgOh-2">
+          <mxGeometry y="247" width="304" height="43" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
