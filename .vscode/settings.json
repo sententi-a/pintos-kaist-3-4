@@ -21,6 +21,7 @@
         "memory_resource": "c",
         "istream": "c",
         "locale": "c",
-        "*.inc": "c"
+        "*.inc": "c",
+        "malloc.h": "c"
     }
 }
