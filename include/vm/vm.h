@@ -2,6 +2,10 @@
 #define VM_VM_H
 #include <stdbool.h>
 #include "threads/palloc.h"
+/*##################Newly added in Project 3####################*/
+/*-------------------Supplemental Page Table--------------------*/
+#include "lib/kernel/hash.h"
+/*#############################################################*/
 
 enum vm_type {
 	/* page not initialized */
@@ -17,7 +21,7 @@ enum vm_type {
 
 	/* Auxillary bit flag marker for store information. You can add more
 	 * markers, until the value is fit in the int. */
-	VM_MARKER_0 = (1 << 3),
+	VM_MARKER_0 = (1 << 3), // a page of stack segment
 	VM_MARKER_1 = (1 << 4),
 
 	/* DO NOT EXCEED THIS VALUE. */
@@ -35,6 +39,15 @@ struct page_operations;
 struct thread;
 
 #define VM_TYPE(type) ((type) & 7)
+/*##############Newly added in Project 3################*/
+/*---------------------Lazy Loading--------------------*/
+struct resource {
+	struct file *file;
+	off_t offset;
+	size_t read_bytes;
+	size_t zero_bytes;
+};
+/*####################################################*/
 
 /* The representation of "page".
  * This is kind of "parent class", which has four "child class"es, which are
@@ -45,7 +58,12 @@ struct page {
 	void *va;              /* Address in terms of user space */
 	struct frame *frame;   /* Back reference for frame */
 
+	/*###############Newly added in Project 3###############*/
 	/* Your implementation */
+	struct hash_elem hash_elem;
+	bool writable; 
+	//struct resource *resource;
+	/*#####################################################*/
 
 	/* Per-type data are binded into the union.
 	 * Each function automatically detects the current union */
@@ -64,6 +82,15 @@ struct frame {
 	void *kva;
 	struct page *page;
 };
+
+/*################# Newly added in Project 3 ####################*/
+/* Frame Management */
+/* frame table is Global */
+struct frame_table {
+	// struct hash hash;
+	// struct list;
+};
+/*###############################################################*/
 
 /* The function table for page operations.
  * This is one way of implementing "interface" in C.
@@ -85,6 +112,7 @@ struct page_operations {
  * We don't want to force you to obey any specific design for this struct.
  * All designs up to you for this. */
 struct supplemental_page_table {
+	struct hash hash;
 };
 
 #include "threads/thread.h"

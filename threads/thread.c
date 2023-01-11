@@ -226,10 +226,6 @@ thread_create (const char *name, int priority,
 	t->next_fd = 2;
 	/*---------------------------Process System Call-------------------------*/
 	/* Add new thread 't' into current thread's child_list */
-	/*이게 여기에 있는 이유는 아마 fork를 할 때 타고 타고 들어와서 thread_create를 부르기 때문?
-	  그리고 모든 프로세스의 조상인 init process가 pintos?? 
-	  위치도 중요하다고 생각.. 
-	*/
 	struct thread *curr = thread_current ();
 	list_push_back (&curr->children, &t->child_elem);
 	/*########################################################################*/

@@ -5,6 +5,10 @@ struct page;
 enum vm_type;
 
 struct anon_page {
+    //dirty?
+    //accessed?
+    //swap disk 관련?
+    //stack인지 아닌지 
 };
 
 void vm_anon_init (void);
