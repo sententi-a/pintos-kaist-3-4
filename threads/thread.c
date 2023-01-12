@@ -334,10 +334,7 @@ void thread_awake(int64_t ticks) {
 	
 	// while (target != list_end (&sleep_list)) {
 	for (target = list_begin (&sleep_list); target != list_end (&sleep_list); ) {
-		/*list_entry() : Converts pointer to list element LIST_ELEM 
-		into a pointer to the structure that LIST_ELEM is embedded inside.*/
-		struct thread *thread_pt = list_entry(target, struct thread, elem);
-		
+		struct thread *thread_pt = list_entry(target, struct thread, elem);  /*list_entry() : Converts pointer to list element LIST_ELEM into a pointer to the structure that LIST_ELEM is embedded inside.*/
 		/*if tick is greater than / or same as wakeup_tick, 
 		  removes a target thread out of sleep_list 
 		  and changes its state to THREAD_READY*/
@@ -360,7 +357,7 @@ void update_next_tick_to_awake(int64_t ticks) {
 }	
 /*****Newly added in Project 1 (Alarm Clock)*****/
 /*Returns next_tick_to_awake value*/
-int64_t tick_to_awake(void) {
+int64_t get_next_tick_to_awake(void) {
 	/*최소 tick 값을 반환*/
 	return next_tick_to_awake;
 }
@@ -752,8 +749,8 @@ schedule (void) {
 		/* If the thread we switched from is dying, destroy its struct
 		   thread. This must happen late so that thread_exit() doesn't
 		   pull out the rug under itself.
-		   We just queuing the page free request here because the page is
-		   currently used by the stack.
+		   We just queuing the page free reqeust here because the page is
+		   currently used bye the stack.
 		   The real destruction logic will be called at the beginning of the
 		   schedule(). */
 		if (curr && curr->status == THREAD_DYING && curr != initial_thread) {
