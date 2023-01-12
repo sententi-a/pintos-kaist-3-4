@@ -192,8 +192,8 @@ __do_fork (void *aux) {
 
 	process_activate (curr); /* Update TSS */
 #ifdef VM
-	supplemental_page_table_init (&current->spt);
-	if (!supplemental_page_table_copy (&current->spt, &parent->spt))
+	supplemental_page_table_init (&curr->spt);
+	if (!supplemental_page_table_copy (&curr->spt, &parent->spt))
 		goto error;
 #else
 	if (!pml4_for_each (parent->pml4, duplicate_pte, parent))
@@ -332,10 +332,10 @@ process_wait (tid_t child_tid UNUSED) {
 
 	/* Wait for the child process 
 	   Parent process sleeps ... zzzz */
-	sema_down (&child->wait_sema); /*이제 child가 exit을 부를 때 sema_up()을 하면 됨*/
+	sema_down (&child->wait_sema); 
 	int child_exit_status = child->exit_status;
-	list_remove (&child->child_elem); /*sema_down을 했다는 건 child process가 exit을 했다는 의미*/
-	sema_up (&child->reap_sema); /* 이걸 써야하는 이유를 한 번 찾아보자 */
+	list_remove (&child->child_elem); 
+	sema_up (&child->reap_sema); 
 
 	return child_exit_status;
 	/*####################################################################*/
@@ -523,7 +523,7 @@ load (const char *file_name, struct intr_frame *if_) {
 	bool success = false;
 	int i;
 
-	/*#####Newly added in Project 2-1#####*/
+	/*###########Newly added in Project 2-1###########*/
 	/*##### Argument parsing #####*/
 	/* Parse command line into arguments */
 	char *argv[128];  	/* arguments */
@@ -538,6 +538,7 @@ load (const char *file_name, struct intr_frame *if_) {
 		argc++;
 		argv[argc] = token;
 	}
+	/*#################################################*/
 
 	/* Allocate and activate page directory. */
 	t->pml4 = pml4_create ();
@@ -574,7 +575,7 @@ load (const char *file_name, struct intr_frame *if_) {
 
 	/* Read program headers. */
 	file_ofs = ehdr.e_phoff;
-	for (i = 0; i < ehdr.e_phnum; i++) {
+	for (i = 0; i < ehdr.e_phnum; i++) { //e_phnum : number of program headers
 		struct Phdr phdr;
 
 		if (file_ofs < 0 || file_ofs > file_length (file))
@@ -799,9 +800,34 @@ install_page (void *upage, void *kpage, bool writable) {
 
 static bool
 lazy_load_segment (struct page *page, void *aux) {
-	/* TODO: Load the segment from the file */
-	/* TODO: This called when the first page fault occurs on address VA. */
-	/* TODO: VA is available when calling this function. */
+	/* FIXME: Load the segment from the file */
+	/* FIXME: This called when the first page fault occurs on address VA. */
+	/* FIXME: VA is available when calling this function. */
+	/*#####################Newly added in Project 3#########################*/
+	/*---------------------------Lazy Loading-------------------------------*/
+	// 이제 aux 내에 주어진 파일 열어서 읽고, 그 내용을 어디에 저장? upage에 매핑된 kpage에 저장해야 함 
+
+	struct resource *resource = (struct resource *) aux;
+
+	/* Get a frame mapped to page */
+	uint8_t *kpage = page->frame->kva;
+
+	if (!kpage) {
+		return false;
+	}
+	
+	/* Read segment from file and load it to memory*/
+	file_seek (resource->file, resource->offset);
+
+	if (file_read(resource->file, kpage, resource->read_bytes) != (int) resource->read_bytes) {
+		//pml4_clear_page()? 어떻게 처리해줘야 할까
+		return false;
+	}
+	/* zeroing */
+	memset(kpage + resource->read_bytes, 0, resource->zero_bytes);
+
+	return true;
+	/*######################################################################*/
 }
 
 /* Loads a segment starting at offset OFS in FILE at address
@@ -832,13 +858,31 @@ load_segment (struct file *file, off_t ofs, uint8_t *upage,
 		size_t page_read_bytes = read_bytes < PGSIZE ? read_bytes : PGSIZE;
 		size_t page_zero_bytes = PGSIZE - page_read_bytes;
 
-		/* TODO: Set up aux to pass information to the lazy_load_segment. */
-		void *aux = NULL;
+		/* FIXME: Set up aux to pass information to the lazy_load_segment. */
+		/*#########################Newly added in Project 3#############################*/
+		/*---------------------------------Lazy Loading---------------------------------*/
+		struct resource *resource = (struct resource *) malloc (sizeof(struct resource));
+		resource->file = file;
+		resource->offset = ofs;
+		resource->read_bytes = page_read_bytes;
+		resource->zero_bytes = page_zero_bytes;
+
+		// 위에서는 kpage부터 시작해 size만큼 저장하고, 남은건 0로 저장하던데 그럼 read_bytes와 zero_bytes도 저장?
+		void *aux = resource;
+		/*##############################################################################*/
+		//void *aux = NULL;
 		if (!vm_alloc_page_with_initializer (VM_ANON, upage,
 					writable, lazy_load_segment, aux))
 			return false;
 
+		//free(resource);
+
 		/* Advance. */
+		/*#########################Newly added in Project 3#############################*/
+		/*---------------------------------Lazy Loading---------------------------------*/
+		/*리뷰하기 : 추가된 것 ... 계속해서 page == NULL이었음 .. */
+		ofs += page_read_bytes;
+		/*#############################################################################*/
 		read_bytes -= page_read_bytes;
 		zero_bytes -= page_zero_bytes;
 		upage += PGSIZE;
@@ -852,11 +896,31 @@ setup_stack (struct intr_frame *if_) {
 	bool success = false;
 	void *stack_bottom = (void *) (((uint8_t *) USER_STACK) - PGSIZE);
 
-	/* TODO: Map the stack on stack_bottom and claim the page immediately.
-	 * TODO: If success, set the rsp accordingly.
-	 * TODO: You should mark the page is stack. */
-	/* TODO: Your code goes here */
+	/* FIXME: Map the stack on stack_bottom and claim the page immediately.
+	 * FIXME: If success, set the rsp accordingly.
+	 * FIXME: You should mark the page is stack. */
+	/* FIXME: Your code goes here */
+	/*######################Newly added in Project 3###########################*/
+	/*----------------------------Lazy Loading--------------------------------*/
+	//page를 할당해주고 (vm_alloc_page or vm_alloc_page_with_initializer), 그 다음에 스택이라는 걸 마킹
+	
+	/* Allocate a page that starts with address stack_bottom */
+	success = vm_alloc_page (VM_ANON | VM_MARKER_0, stack_bottom, 1);
+	if (!success) {
+		return false;
+	}
 
+	/* Stack flag on */
+
+	/* Map to a free frame */
+	success = vm_claim_page (stack_bottom);
+	if (!success) {
+		return false;
+	}
+
+	if_->rsp = USER_STACK;
+	/*#########################################################################*/
+	//printf("success 여부 %d\n", success);
 	return success;
 }
 #endif /* VM */

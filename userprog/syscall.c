@@ -93,9 +93,18 @@ syscall_init (void) {
    3. page is not allocated */
 void check_address (void *addr) {
 	struct thread *curr = thread_current ();
-	if (addr == NULL || ! is_user_vaddr (addr) || pml4_get_page (curr->pml4, addr) == NULL){
+	// if (addr == NULL || ! is_user_vaddr (addr) || pml4_get_page (curr->pml4, addr) == NULL){
+	// 	exit(-1);
+	// }
+	if (addr == NULL || ! is_user_vaddr (addr) ) {
+		// printf("첫번째 케이스\n");
 		exit(-1);
 	}
+	// printf("중간이징ㄹ\n");
+	// if (pml4_get_page (curr->pml4, addr) == NULL) {
+	// 	printf("두번째 케이스\n");
+	// 	exit(-1);
+	// }
 }
 
 /* The main system call interface */
@@ -300,7 +309,9 @@ int filesize (int fd) {
    If fd is 0, it reads from the keyboard using input_getc() 
 */
 int read (int fd, void *buffer, unsigned length) {
+	// printf("check_address 전 \n");
 	check_address (buffer);
+	// printf("check_address 후 \n");
 	//check_address (buffer + length - 1);
 
 	int bytes_read;
