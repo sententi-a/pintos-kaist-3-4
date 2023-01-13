@@ -132,8 +132,8 @@ struct thread {
 	/*#####################################################*/
 
 	/*###############Newly added in Project 3##############*/
-	void *stack_pointer;
-	void *stack_bottom;
+	uintptr_t *stack_pointer;
+	uintptr_t *stack_bottom;
 	/*#####################################################*/
 	
 

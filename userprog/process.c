@@ -921,6 +921,7 @@ setup_stack (struct intr_frame *if_) {
 	if_->rsp = USER_STACK;
 	/*#########################################################################*/
 	//printf("success 여부 %d\n", success);
+	thread_current()->stack_bottom = (uintptr_t *) stack_bottom;
 	return success;
 }
 #endif /* VM */

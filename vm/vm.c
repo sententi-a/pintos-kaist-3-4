@@ -251,7 +251,7 @@ vm_try_handle_fault (struct intr_frame *f UNUSED, void *addr UNUSED,
 		/*-------------------Stack Growth------------------*/
 		// 커널 영역 내에서 page_fault가 일어날 수 있냐? 
 		// 커널 영역에서 작업 중에 커널이 유저 스택에 무언가 쓰려고 하는 경우, 그런데 스택이 다 차있는 경우에 (??)
-		uintptr_t *stack_pointer = is_user_vaddr(f->rsp) ? f->rsp : thread_current()->stack_pointer;
+		uintptr_t *stack_pointer = is_user_vaddr(f->rsp)? f->rsp : thread_current()->stack_pointer;
 
 		// x86-64에서 PUSH 인스트럭션은 rsp를 조정하기 전에 접근 permission을 체크하기 때문에, rsp - 8 주소값에서 page fault를 일으킬 것
 		// 그리고, 실제 fault가 난 addr는 그 범위 내에 있어야 segfault를 부르지 않고 valid한 stack growth를 이끌어낼 수 있음
