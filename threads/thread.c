@@ -224,10 +224,24 @@ thread_create (const char *name, int priority,
 	t->fdt[1] = 2;
 	
 	t->next_fd = 2;
+	/*---------------------------Wait Refactoring------------------------------*/
+	struct body *body = (struct body *) calloc (1, sizeof(struct body));
+
+	body->self = t;
+	body->is_exit = 0;
+	body->tid = t->tid;
+
+	t->body = body;
+	t->body->exit_status = 0;
+	sema_init (&t->fork_sema, 0);
+	sema_init (&t->reap_sema, 0); 
+	sema_init (&t->body->wait_sema, 0); /*Initialize semaphore for wait(), exit()*/
+
 	/*---------------------------Process System Call-------------------------*/
-	/* Add new thread 't' into current thread's child_list */
 	struct thread *curr = thread_current ();
-	list_push_back (&curr->children, &t->child_elem);
+	/* Add new thread 't' into current thread's child_list */
+	list_push_back (&curr->children, &t->body->child_elem);
+
 	/*########################################################################*/
 
 	/* Call the kernel_thread if it scheduled.
@@ -471,7 +485,7 @@ thread_get_priority (void) {
 /* Find child process with 'child_tid' in current thread's children list
    Returns child process (struct thread *) on success, NULL on failure
 */
-struct thread *
+struct body *
 find_child_process (tid_t child_tid) {
 	struct thread *curr = thread_current ();
 
@@ -480,10 +494,10 @@ find_child_process (tid_t child_tid) {
 	/* Walking through the children list */
 	for (child = list_begin(&curr->children); 
 		 child != list_end (&curr->children); child = list_next (child)) {
-			struct thread *child_process = list_entry (child, struct thread, child_elem);
+			struct body *child_body = list_entry (child, struct body, child_elem);
 			/* If tid matches */
-			if (child_process->tid == child_tid) {
-				return child_process;
+			if (child_body->tid == child_tid) {
+				return child_body;
 			}
 	}
 	return NULL;
@@ -590,10 +604,10 @@ init_thread (struct thread *t, const char *name, int priority) {
 	/*###############Newly added in Project 2###############*/
 	/*-----------------Process System Call------------------*/
 	list_init (&t->children); /* Initialize a process' children list*/
-	sema_init (&t->wait_sema, 0); /*Initialize semaphore for wait(), exit()*/
-	sema_init (&t->reap_sema, 0); 
-	sema_init (&t->fork_sema, 0);
-	t->exit_status = 0;
+	// sema_init (&t->body->wait_sema, 0); /*Initialize semaphore for wait(), exit()*/
+	// sema_init (&t->reap_sema, 0); 
+	// sema_init (&t->fork_sema, 0);
+	// t->body->exit_status = 0;
 	t->running = NULL;
 	/*#####################################################*/
 

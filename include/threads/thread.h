@@ -93,6 +93,19 @@ typedef int tid_t;
  * only because they are mutually exclusive: only a thread in the
  * ready state is on the run queue, whereas only a thread in the
  * blocked state is on a semaphore wait list. */
+
+/*##################Child dead body######################*/
+/*------------------Wait Refactoring---------------------*/
+struct body {
+	tid_t tid;
+	struct list_elem child_elem;
+	bool is_exit; 
+	int exit_status;
+	struct semaphore wait_sema;
+	struct thread *self;
+};
+/*####################################################*/
+
 struct thread {
 	/* Owned by thread.c. */
 	tid_t tid;                          /* Thread identifier. */
@@ -116,14 +129,19 @@ struct thread {
 	/*###############Newly added in Project 2###############*/
 	/*-----------------Process System Call------------------*/
 	struct list children; 	/* Child process list */
-	struct list_elem child_elem; /* Child process list element */
-	struct semaphore wait_sema; /* Semaphore for wait() - to signal to parent process*/
+	//struct list_elem child_elem; /* Child process list element */
+	//struct semaphore wait_sema; /* Semaphore for wait() - to signal to parent process*/
 	struct semaphore fork_sema; /* Semaphore for fork() */
 	struct semaphore reap_sema; /* Semaphore for reaping zombie child processes */
 
+	/*--------------------Wait Refactoring------------------*/
+	//struct thread *parent; /* Parent thread */
+	struct body *body; /* Struct that saves information about itself */
+	/*-----------------------------------------------------*/
+
 	struct intr_frame if_; /* Interrupt frame for switching */
 
-	int exit_status;   /* for exit(), wait()*/
+	//int exit_status;   /* for exit(), wait()*/
 	// int wait_call_count; 
 	/*-----------------File System Call --------------------*/
 	struct file **fdt; /* Pointer to File Descriptor Table*/
@@ -197,6 +215,6 @@ void test_max_priority (void);
 /*############################################*/
 /*############Newly added in Project 2###############*/
 /*---------------Process System Call-----------------*/
-struct thread *find_child_process (tid_t child_tid);
+struct body *find_child_process (tid_t child_tid);
 /*###################################################*/
 #endif /* threads/thread.h */

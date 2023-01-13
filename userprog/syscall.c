@@ -121,8 +121,9 @@ syscall_handler (struct intr_frame *f) {
 	/*##### Newly added in Project 2 #####*/
 	/*##### System Call #####*/
 	// TODO: Your implementation goes here.
-	/*(새로 추가)*/
+	/*#################Newly added in Project 3###################*/
 	thread_current()->stack_pointer = f->rsp;
+	/*############################################################*/
 
 	/* Copy system call arguments and call system call*/
 	//printf ("system call!\n");
@@ -203,9 +204,16 @@ void halt (void) {
 /**/
 void exit (int status) {
 	struct thread *curr = thread_current ();
-	curr->exit_status = status;
 
-	printf("%s: exit(%d)\n", curr->name, curr->exit_status);
+	/*##################Wait#####################*/
+	enum intr_level old_level = intr_disable ();
+	if (curr->body){
+		curr->body->exit_status = status;
+		curr->body->is_exit = 1;
+	}
+	intr_set_level(old_level);
+	/*############################################*/
+	printf("%s: exit(%d)\n", curr->name, status);
 	thread_exit ();
 }
 
