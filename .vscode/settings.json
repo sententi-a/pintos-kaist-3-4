@@ -22,6 +22,7 @@
         "istream": "c",
         "locale": "c",
         "*.inc": "c",
-        "malloc.h": "c"
+        "malloc.h": "c",
+        "lib.h": "c"
     }
 }

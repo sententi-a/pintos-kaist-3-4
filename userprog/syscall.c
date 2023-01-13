@@ -97,13 +97,11 @@ void check_address (void *addr) {
 	// 	exit(-1);
 	// }
 	if (addr == NULL || ! is_user_vaddr (addr) ) {
-		// printf("첫번째 케이스\n");
 		exit(-1);
 	}
-	// printf("중간이징ㄹ\n");
 	// if (pml4_get_page (curr->pml4, addr) == NULL) {
-	// 	printf("두번째 케이스\n");
 	// 	exit(-1);
+	// CHECK: 해당 케이스 통과 안되서 뺌 (수정해야하는지 확인)
 	// }
 }
 

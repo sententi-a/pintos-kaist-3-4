@@ -206,6 +206,9 @@ vm_get_frame (void) {
 /* Growing the stack. */
 static void
 vm_stack_growth (void *addr UNUSED) {
+	if(!vm_alloc_page (VM_ANON | VM_MARKER_0, addr, 1)) return;
+	if(!vm_claim_page (addr)) return;
+	// printf("///////////vm_stack_grow////////////////");
 }
 
 /* Handle the fault on write_protected page */
@@ -223,14 +226,22 @@ vm_try_handle_fault (struct intr_frame *f UNUSED, void *addr UNUSED,
 	/*----------------------------------Lazy Loading------------------------------------*/
 	/* FIXME: Validate the fault */
 	/* FIXME: Your code goes here */
+	struct page* stk_grow = pg_round_down(addr);
+	uint8_t *stack_count = 1;
+	void *stack_bottom = (void *) (((uint8_t *) USER_STACK) - PGSIZE);
 
 	//[GITBOOK] Finally, modify vm_try_handle_fault function to resolve the page struct 
 	//corresponding to the faulted address by consulting to the supplemental page table through spt_find_page
 	page = spt_find_page (spt, pg_round_down (addr));
-	
+
 	/* Valid page fault : accesses invalid */
 	if (!page || is_kernel_vaddr (addr)) {
 		//printf("vm_try_handle_fault(): spt에서 페이지를 찾지 못했습니다.\n");
+			
+		if(pg_round_down(f->rsp) == pg_round_down(addr - PGSIZE)){
+			vm_stack_growth(stk_grow);
+		}
+
 		return false;
 	}
 
@@ -240,7 +251,7 @@ vm_try_handle_fault (struct intr_frame *f UNUSED, void *addr UNUSED,
 	}
 
 	/* Bogus fault : (2) swaped-out page*/
-
+	
 	/* Bogus fault : (3) write-protected page (COW) */
 
 	/*#################################################################################*/
