@@ -131,6 +131,10 @@ struct thread {
 	struct file *running; /* Running File */
 	/*#####################################################*/
 
+	/*###############Newly added in Project 3##############*/
+	uintptr_t *rsp;
+
+	/*#####################################################*/
 	
 
 #ifdef USERPROG
