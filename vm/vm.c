@@ -90,13 +90,12 @@ vm_alloc_page_with_initializer (enum vm_type type, void *upage, bool writable,
 	}
 
 	/* If the upage is already occupied... */
-	// else {
-	// 	goto err;
-	// }
+	else {
+		goto err;
+	}
 
 	return true;
 
-/*언제 err로 가게 될까?*/
 err:
 	return false;
 }
@@ -192,13 +191,14 @@ vm_get_frame (void) {
 	
 	/* FIXME: Eviction */
 	if (!frame->kva) {
+		free(frame);
 		PANIC("todo");
 	}
 	//printf("frame 페이지의 주소값: 0x%x\n", frame->page);
 	/* TODO: ADD to frame table */
 	/*##############################################################################*/
 	ASSERT (frame != NULL);
-	ASSERT (frame->page == NULL); //FIXME: 여기에서 에러남 왜 페이지가 NULL이 아닐까?
+	ASSERT (frame->page == NULL);
 
 	return frame;
 }
@@ -206,6 +206,17 @@ vm_get_frame (void) {
 /* Growing the stack. */
 static void
 vm_stack_growth (void *addr UNUSED) {
+	
+	/* Stack bottom */
+	void *bottom_temp = pg_round_down(addr);
+
+	/* Keep growing stack until it meets allocated stack page */
+	while (bottom_temp < USER_STACK && vm_alloc_page (VM_ANON | VM_MARKER_0, bottom_temp, true)) {
+		vm_claim_page (addr);
+	    bottom_temp += PGSIZE;
+	};
+
+	thread_current()->stack_bottom = pg_round_down(addr);
 }
 
 /* Handle the fault on write_protected page */
@@ -226,11 +237,33 @@ vm_try_handle_fault (struct intr_frame *f UNUSED, void *addr UNUSED,
 
 	//[GITBOOK] Finally, modify vm_try_handle_fault function to resolve the page struct 
 	//corresponding to the faulted address by consulting to the supplemental page table through spt_find_page
-	page = spt_find_page (spt, pg_round_down (addr));
 	
-	/* Valid page fault : accesses invalid */
-	if (!page || is_kernel_vaddr (addr)) {
+	/* Valid page fault : (1) Access to kernel address  */
+	if (is_kernel_vaddr(addr) && user) {
+		return false;
+	}
+
+	page = spt_find_page (spt, addr);
+	
+	/* Valid page fault : (2) Access to uninitialized page */
+	if (!page) {
 		//printf("vm_try_handle_fault(): spt에서 페이지를 찾지 못했습니다.\n");
+		/*-------------------Stack Growth------------------*/
+		// 커널 영역 내에서 page_fault가 일어날 수 있냐? 
+		// 커널 영역에서 작업 중에 커널이 유저 스택에 무언가 쓰려고 하는 경우, 그런데 스택이 다 차있는 경우에 (??)
+		void *stack_pointer = is_user_vaddr(f->rsp)? f->rsp : thread_current()->stack_pointer;
+
+		// x86-64에서 PUSH 인스트럭션은 rsp를 조정하기 전에 접근 permission을 체크하기 때문에, rsp - 8 주소값에서 page fault를 일으킬 것
+		// 그리고, 실제 fault가 난 addr는 그 범위 내에 있어야 segfault를 부르지 않고 valid한 stack growth를 이끌어낼 수 있음
+		if ((stack_pointer - 8) == addr && USER_STACK - (1 << 20) <= addr && addr <= USER_STACK) {		
+			vm_stack_growth (thread_current()->stack_bottom - PGSIZE);
+		 	return true;
+		}
+		return false;
+	}
+
+	/* Valid page fault : (3) Write access to read-only page */
+	if(write && !page->writable) {
 		return false;
 	}
 
@@ -238,6 +271,7 @@ vm_try_handle_fault (struct intr_frame *f UNUSED, void *addr UNUSED,
 	if (not_present) {
 		return vm_do_claim_page (page);
 	}
+
 
 	/* Bogus fault : (2) swaped-out page*/
 
@@ -266,11 +300,6 @@ vm_claim_page (void *va UNUSED) {
 
 	
 	/* FIXME: Fill this function */
-	//spt_insert_page (&thread_current ()->spt, page);
-	/* 없다면 만들어주고, 있다면 그냥 바로 vm_do_claim_page? */
-	// spt에 먼저 페이지 넣은 후에 매핑?! (아직 spt에 페이지가 없을 때)
-	// page의 다른 멤버 변수는 어떻게 처리?
-
 	/* Find a allocated page(but not cached) that starts with va */
 	page = spt_find_page (&thread_current ()->spt, va);
 
@@ -427,25 +456,7 @@ page_less (const struct hash_elem *a_,
 }
 
 /*-------------------------Page Cleanup----------------------------*/
-// void
-// hash_clear (struct hash *h, hash_action_func *destructor) {
-// 	size_t i;
 
-// 	for (i = 0; i < h->bucket_cnt; i++) {
-// 		struct list *bucket = &h->buckets[i];
-
-// 		if (destructor != NULL)
-// 			while (!list_empty (bucket)) {
-// 				struct list_elem *list_elem = list_pop_front (bucket);
-// 				struct hash_elem *hash_elem = list_elem_to_hash_elem (list_elem);
-// 				destructor (hash_elem, h->aux);
-// 			}
-
-// 		list_init (bucket);
-// 	}
-
-// 	h->elem_cnt = 0;
-// }
 void
 page_destroy (struct hash_elem *e, void *aux) {
 	struct page *page = hash_entry(e, struct page, hash_elem);

@@ -17,6 +17,10 @@
 #include "userprog/process.h"
 #include "devices/input.h"
 #include "threads/palloc.h"
+/*#############Newly added in Project 3 ###############*/
+#include "vm/vm.h"
+/*####################################################*/
+
 
 void syscall_entry (void);
 void syscall_handler (struct intr_frame *);
@@ -96,8 +100,12 @@ void check_address (void *addr) {
 	// if (addr == NULL || ! is_user_vaddr (addr) || pml4_get_page (curr->pml4, addr) == NULL){
 	// 	exit(-1);
 	// }
-	if (addr == NULL || ! is_user_vaddr (addr) ) {
+	if (addr == NULL || ! is_user_vaddr (addr)) {
 		// printf("첫번째 케이스\n");
+		exit(-1);
+	}
+
+	if (!spt_find_page (&curr->spt, addr)) {
 		exit(-1);
 	}
 	// printf("중간이징ㄹ\n");
@@ -113,6 +121,8 @@ syscall_handler (struct intr_frame *f) {
 	/*##### Newly added in Project 2 #####*/
 	/*##### System Call #####*/
 	// TODO: Your implementation goes here.
+	/*(새로 추가)*/
+	thread_current()->stack_pointer = f->rsp;
 
 	/* Copy system call arguments and call system call*/
 	//printf ("system call!\n");
