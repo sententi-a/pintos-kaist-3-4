@@ -23,6 +23,7 @@
         "locale": "c",
         "*.inc": "c",
         "malloc.h": "c",
-        "lib.h": "c"
+        "lib.h": "c",
+        "vm.h": "c"
     }
 }

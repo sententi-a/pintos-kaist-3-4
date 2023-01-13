@@ -189,7 +189,7 @@ vm_get_frame (void) {
 	/*------------------------------Frame Management----------------------------------*/
 	/* FIXME: Fill this function. */
 	frame->kva = palloc_get_page(PAL_USER);
-	
+
 	/* FIXME: Eviction */
 	if (!frame->kva) {
 		PANIC("todo");
@@ -198,7 +198,7 @@ vm_get_frame (void) {
 	/* TODO: ADD to frame table */
 	/*##############################################################################*/
 	ASSERT (frame != NULL);
-	ASSERT (frame->page == NULL); //FIXME: 여기에서 에러남 왜 페이지가 NULL이 아닐까?
+	ASSERT (frame->page == NULL);
 
 	return frame;
 }
