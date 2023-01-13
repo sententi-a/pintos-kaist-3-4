@@ -90,9 +90,9 @@ vm_alloc_page_with_initializer (enum vm_type type, void *upage, bool writable,
 	}
 
 	/* If the upage is already occupied... */
-	// else {
-	// 	goto err;
-	// }
+	else {
+		goto err;
+	}
 
 	return true;
 
@@ -207,9 +207,16 @@ vm_get_frame (void) {
 static void
 vm_stack_growth (void *addr UNUSED) {
 	
-	if(!vm_alloc_page (VM_ANON | VM_MARKER_0, addr, 1)) return;
-	if(!vm_claim_page (addr)) return;
-	// printf("///////////vm_stack_grow////////////////");
+	/* Stack bottom */
+	void *bottom_temp = pg_round_down(addr);
+
+	/* Keep growing stack until it meets allocated stack page */
+	while (bottom_temp < USER_STACK && vm_alloc_page (VM_ANON | VM_MARKER_0, bottom_temp, true)) {
+		vm_claim_page (addr);
+	    bottom_temp += PGSIZE;
+	};
+
+	thread_current()->stack_bottom = pg_round_down(addr);
 }
 
 /* Handle the fault on write_protected page */
@@ -227,22 +234,36 @@ vm_try_handle_fault (struct intr_frame *f UNUSED, void *addr UNUSED,
 	/*----------------------------------Lazy Loading------------------------------------*/
 	/* FIXME: Validate the fault */
 	/* FIXME: Your code goes here */
-	struct page* stk_grow = pg_round_down(addr);
-	uint8_t *stack_count = 1;
 
 	//[GITBOOK] Finally, modify vm_try_handle_fault function to resolve the page struct 
 	//corresponding to the faulted address by consulting to the supplemental page table through spt_find_page
-	page = spt_find_page (spt, pg_round_down (addr));
+	
+	/* Valid page fault : (1) Access to kernel address  */
+	if (is_kernel_vaddr(addr) && user) {
+		return false;
+	}
 
-	/* Valid page fault : accesses invalid */
-	if (!page && !is_kernel_vaddr (addr)) { //CHECK: 조건식 변경
-		
-		/* stack_growth */
-		void *stack_bottom = is_kernel_vaddr(f->rsp) ? f->rsp : thread_current()->rsp;	
-		if(pg_round_down(f->rsp) == pg_round_down(addr - PGSIZE)){
-			vm_stack_growth(stk_grow);
+	page = spt_find_page (spt, addr);
+	
+	/* Valid page fault : (2) Access to uninitialized page */
+	if (!page) {
+		//printf("vm_try_handle_fault(): spt에서 페이지를 찾지 못했습니다.\n");
+		/*-------------------Stack Growth------------------*/
+		// 커널 영역 내에서 page_fault가 일어날 수 있냐? 
+		// 커널 영역에서 작업 중에 커널이 유저 스택에 무언가 쓰려고 하는 경우, 그런데 스택이 다 차있는 경우에 (??)
+		uintptr_t *stack_pointer = is_user_vaddr(f->rsp) ? f->rsp : thread_current()->stack_pointer;
+
+		// x86-64에서 PUSH 인스트럭션은 rsp를 조정하기 전에 접근 permission을 체크하기 때문에, rsp - 8 주소값에서 page fault를 일으킬 것
+		// 그리고, 실제 fault가 난 addr는 그 범위 내에 있어야 segfault를 부르지 않고 valid한 stack growth를 이끌어낼 수 있음
+		if ((stack_pointer - 8) <= addr && USER_STACK - (1 << 20) <= addr && addr <= USER_STACK) {		
+			vm_stack_growth (thread_current()->stack_bottom - PGSIZE);
+		 	return true;
 		}
+		return false;
+	}
 
+	/* Valid page fault : (3) Write access to read-only page */
+	if(write && !page->writable) {
 		return false;
 	}
 
@@ -251,8 +272,9 @@ vm_try_handle_fault (struct intr_frame *f UNUSED, void *addr UNUSED,
 		return vm_do_claim_page (page);
 	}
 
+
 	/* Bogus fault : (2) swaped-out page*/
-	
+
 	/* Bogus fault : (3) write-protected page (COW) */
 
 	/*#################################################################################*/
