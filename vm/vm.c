@@ -217,7 +217,7 @@ vm_stack_growth (void *addr UNUSED) {
 	// }
 
 	// thread_current()->stack_bottom = pg_round_down(addr);
-	
+
 	void *bottom_temp = pg_round_down(addr);
 
 	if (vm_alloc_page(VM_ANON | VM_MARKER_0, bottom_temp, 1)) {
@@ -399,8 +399,6 @@ supplemental_page_table_copy (struct supplemental_page_table *dst UNUSED,
 		}
 
 		/* Type (2) : VM_MARKER_0 (stack) */
-		// MARKER_0 (stack)일 때 (setup_stack ?-> 다음 루프로)
-		// 인터럽트 프레임 어떻게 가져오죠 .. 
 		type = page_get_type(page);
 
 		if (type & VM_MARKER_0) {
@@ -452,9 +450,10 @@ supplemental_page_table_kill (struct supplemental_page_table *spt UNUSED) {
 	// 	destroy (page);
 	// }
 
-	hash_clear(&spt->hash, page_destroy);
-	ASSERT(hash_empty(&spt->hash));
 	// hash_clear나 hash_destroy를 써야 하나?
+	hash_clear(&spt->hash, page_destroy);
+	//hash_destroy (&spt->hash, page_destroy); /* Fail : spt_find_page 안 됨 */
+	ASSERT(hash_empty(&spt->hash));
 }
 
 /*###################Newly added in Project 3######################*/
@@ -481,6 +480,7 @@ page_less (const struct hash_elem *a_,
 void
 page_destroy (struct hash_elem *e, void *aux) {
 	struct page *page = hash_entry(e, struct page, hash_elem);
-	vm_dealloc_page(page);
+	spt_remove_page (&thread_current()->spt, page);
+	//vm_dealloc_page(page);
 }
 /*################################################################*/

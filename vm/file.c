@@ -111,11 +111,13 @@ do_mmap (void *addr, size_t length, int writable,
 					writable, lazy_load_segment_file_backed, aux)) {
 			
 			while (upage != addr) {
+				free (resource);
+
 				spt_remove_page (spt, spt_find_page(spt, upage));
 				upage -= PGSIZE;
 			}
 		
-			return;
+			return NULL;
 		}
 
 		offset += page_read_bytes;
@@ -124,7 +126,9 @@ do_mmap (void *addr, size_t length, int writable,
 		zero_bytes -= page_zero_bytes;
 		upage += PGSIZE;
 	}
-
+	/* If successful, returns the virtual address where the file is mapped */
+	
+	return addr;
 	/*########################################################################################*/
 }
 

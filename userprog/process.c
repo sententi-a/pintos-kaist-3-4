@@ -922,7 +922,6 @@ load_segment (struct file *file, off_t ofs, uint8_t *upage,
 		/* Advance. */
 		/*#########################Newly added in Project 3#############################*/
 		/*---------------------------------Lazy Loading---------------------------------*/
-		/*리뷰하기 : 추가된 것 ... 계속해서 page == NULL이었음 .. */
 		ofs += page_read_bytes;
 		/*#############################################################################*/
 		read_bytes -= page_read_bytes;

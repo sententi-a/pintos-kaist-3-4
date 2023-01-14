@@ -198,7 +198,7 @@ syscall_handler (struct intr_frame *f) {
 			break;
 
 		case SYS_MMAP:
-			mmap(f->R.rdi, f->R.rsi, f->R.rdx, f->R.r10, f->R.r8);
+			f->R.rax = mmap(f->R.rdi, f->R.rsi, f->R.rdx, f->R.r10, f->R.r8);
 			break;
 
 		// case SYS_MUNMAP:
@@ -215,7 +215,6 @@ void halt (void) {
 	power_off ();
 }
 
-/**/
 void exit (int status) {
 	struct thread *curr = thread_current ();
 
@@ -531,27 +530,37 @@ void remove_file_from_fdt (int fd) {
 
 /*#####################Newly added in Project 3#########################*/
 /*------------------------Memory Mapped Files---------------------------*/
+/* Maps length bytes the file open as fd starting from offset byte 
+ * into the process's virtual address space at addr */
 void *mmap (void *addr, size_t length, int writable, int fd, off_t offset) {
-	check_address (addr);
+	/* check_address에서는 spt_find_page를 통해 allocated 여부를 따지기 때문에 사용하지 않는 게 맞는듯*/
+	// 아니면 check_address에 전달하는 인자를 바꾸면 됨
+	if (is_kernel_vaddr(addr)) {
+		exit(-1);
+	}
 	
 	/* If addr is 0 or addr is not page_aligned, it fails */
-	if (!addr || !length) {
-		return;
+	if (!addr || length <= 0) {
+		return NULL;
 	}
 
 	/* If fd represents STDIN/STDOUT or fd is invalid, it fails */
 	if (fd == STDIN_FILENO || fd == STDOUT_FILENO || fd < 0 || fd >= FDCOUNT_LIMIT) {
-		return;
+		return NULL;
 	}
 
 	struct file *file = find_file_by_fd (fd);
 
 	if (!file) {
-		return;
+		return NULL;
 	}
 
-	if (!do_mmap (addr, length, writable, file, offset)) {
-		return;
+	void *va = do_mmap (addr, length, writable, file, offset);
+
+	if (!va) {
+		return NULL;
 	}
+
+	return va; 
 }
 /*#######################################################################*/
