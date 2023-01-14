@@ -19,6 +19,7 @@
 #include "threads/palloc.h"
 /*#############Newly added in Project 3 ###############*/
 #include "vm/vm.h"
+#include "vm/file.h"
 /*####################################################*/
 
 
@@ -56,6 +57,12 @@ void remove_file_from_fdt (int fd);
 int add_file_to_fdt (struct file *file);
 
 /*###################################################*/
+
+/*#####################Newly added in Project3#########################*/
+/*-------------------------Memory Mapped Files--------------------------*/
+void *mmap (void *addr, size_t length, int writable, int fd, off_t offset);
+void munmap (void *addr);
+/*####################################################################*/
 
 /* System call.
  *
@@ -190,13 +197,20 @@ syscall_handler (struct intr_frame *f) {
 			close (f->R.rdi);
 			break;
 
+		case SYS_MMAP:
+			mmap(f->R.rdi, f->R.rsi, f->R.rdx, f->R.r10, f->R.r8);
+			break;
+
+		// case SYS_MUNMAP:
+		// 	break;
+
 		default:
 		 	exit (-1);
 		 	break;
 	}
 	// thread_exit ();
 }
-/*##################Process System call######################*/
+/*--------------------Process System call------------------------*/
 void halt (void) {
 	power_off ();
 }
@@ -252,9 +266,7 @@ tid_t fork (const char *thread_name) {
 	return process_fork (thread_name, &thread_current ()->if_);
 }
 
-/*##########################################################*/
-
-/*##################File System call###################*/
+/*----------------------File System call------------------------*/
 /* Create initial_size of file 
    Return true on success, false on failure (already exist / internal memory allocation fail)*/
 bool create (const char *file, unsigned initial_size) {
@@ -331,6 +343,13 @@ int read (int fd, void *buffer, unsigned length) {
 	check_address (buffer);
 	// printf("check_address 후 \n");
 	//check_address (buffer + length - 1);
+	struct supplemental_page_table *spt = &thread_current()->spt;
+
+	// 버퍼에 무언가 써야하니까 그 버퍼로 대표되는 페이지가 writable한지 체크해야 함 
+	struct page *page = spt_find_page(spt, buffer);
+	if (!page->writable) {
+		exit(-1);
+	}
 
 	int bytes_read;
 
@@ -509,3 +528,30 @@ void remove_file_from_fdt (int fd) {
 	//curr->next_fd = fd;
 }
 /*###################################################*/
+
+/*#####################Newly added in Project 3#########################*/
+/*------------------------Memory Mapped Files---------------------------*/
+void *mmap (void *addr, size_t length, int writable, int fd, off_t offset) {
+	check_address (addr);
+	
+	/* If addr is 0 or addr is not page_aligned, it fails */
+	if (!addr || !length) {
+		return;
+	}
+
+	/* If fd represents STDIN/STDOUT or fd is invalid, it fails */
+	if (fd == STDIN_FILENO || fd == STDOUT_FILENO || fd < 0 || fd >= FDCOUNT_LIMIT) {
+		return;
+	}
+
+	struct file *file = find_file_by_fd (fd);
+
+	if (!file) {
+		return;
+	}
+
+	if (!do_mmap (addr, length, writable, file, offset)) {
+		return;
+	}
+}
+/*#######################################################################*/

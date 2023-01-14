@@ -208,15 +208,32 @@ static void
 vm_stack_growth (void *addr UNUSED) {
 	
 	/* Stack bottom */
+	// void *bottom_temp = pg_round_down(addr);
+
+	// /* Keep growing stack until it meets allocated stack page */
+	// while (bottom_temp < USER_STACK && vm_alloc_page (VM_ANON | VM_MARKER_0, bottom_temp, true)) {
+	// 	vm_claim_page (bottom_temp);
+	//     bottom_temp += PGSIZE;
+	// }
+
+	// thread_current()->stack_bottom = pg_round_down(addr);
+	
 	void *bottom_temp = pg_round_down(addr);
 
-	/* Keep growing stack until it meets allocated stack page */
-	while (bottom_temp < USER_STACK && vm_alloc_page (VM_ANON | VM_MARKER_0, bottom_temp, true)) {
-		vm_claim_page (addr);
-	    bottom_temp += PGSIZE;
-	};
+	if (vm_alloc_page(VM_ANON | VM_MARKER_0, bottom_temp, 1)) {
+		vm_claim_page(addr);
+	}
 
-	thread_current()->stack_bottom = pg_round_down(addr);
+	thread_current()->stack_bottom = bottom_temp;
+
+	/* page fault -> allocate and initialize just one page */
+	// uint64_t stk_addr = pg_round_down(addr);
+    // bool success = vm_alloc_page(VM_ANON | VM_MARKER_0, stk_addr, 1);
+    // if(success){
+    //     vm_claim_page(stk_addr);
+    // }
+
+    // thread_current()->stack_bottom -= PGSIZE;
 }
 
 /* Handle the fault on write_protected page */
@@ -242,7 +259,7 @@ vm_try_handle_fault (struct intr_frame *f UNUSED, void *addr UNUSED,
 	if (is_kernel_vaddr(addr) && user) {
 		return false;
 	}
-
+	
 	page = spt_find_page (spt, addr);
 	
 	/* Valid page fault : (2) Access to uninitialized page */
@@ -252,26 +269,30 @@ vm_try_handle_fault (struct intr_frame *f UNUSED, void *addr UNUSED,
 		// 커널 영역 내에서 page_fault가 일어날 수 있냐? 
 		// 커널 영역에서 작업 중에 커널이 유저 스택에 무언가 쓰려고 하는 경우, 그런데 스택이 다 차있는 경우에 (??)
 		void *stack_pointer = is_user_vaddr(f->rsp)? f->rsp : thread_current()->stack_pointer;
+		//void *stack_pointer = f->rsp;
 
 		// x86-64에서 PUSH 인스트럭션은 rsp를 조정하기 전에 접근 permission을 체크하기 때문에, rsp - 8 주소값에서 page fault를 일으킬 것
 		// 그리고, 실제 fault가 난 addr는 그 범위 내에 있어야 segfault를 부르지 않고 valid한 stack growth를 이끌어낼 수 있음
 		if ((stack_pointer - 8) == addr && USER_STACK - (1 << 20) <= addr && addr <= USER_STACK) {		
+			// printf("들어옴\n");
 			vm_stack_growth (thread_current()->stack_bottom - PGSIZE);
 		 	return true;
 		}
 		return false;
 	}
 
+
 	/* Valid page fault : (3) Write access to read-only page */
-	if(write && !page->writable) {
+	if (write && !not_present) {
 		return false;
 	}
-
 	/* Bogus fault : (1) Lazy Load */
 	if (not_present) {
 		return vm_do_claim_page (page);
 	}
 
+
+	return false;
 
 	/* Bogus fault : (2) swaped-out page*/
 
@@ -325,7 +346,7 @@ vm_do_claim_page (struct page *page) {
 	/* FIXME: Insert page table entry to map page's VA to frame's PA. */
 	/*##########################Newly added in Project 3#########################*/
 	/*------------------------------Frame Management-----------------------------*/
-	bool result = pml4_set_page(thread_current()->pml4, page->va, frame->kva, 1);
+	bool result = pml4_set_page(thread_current()->pml4, page->va, frame->kva, page->writable);
 
 	/*If the operation was not successful...*/
 	if (!result) {

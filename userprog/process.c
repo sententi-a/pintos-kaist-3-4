@@ -859,11 +859,14 @@ lazy_load_segment (struct page *page, void *aux) {
 	file_seek (resource->file, resource->offset);
 
 	if (file_read(resource->file, kpage, resource->read_bytes) != (int) resource->read_bytes) {
-		//pml4_clear_page()? 어떻게 처리해줘야 할까
+		// free(resource);
 		return false;
 	}
 	/* zeroing */
 	memset(kpage + resource->read_bytes, 0, resource->zero_bytes);
+	
+	// 할 일을 마쳤으니 free 시켜도 되지 않을까
+	free(resource);
 
 	return true;
 	/*######################################################################*/
