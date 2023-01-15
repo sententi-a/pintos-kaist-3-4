@@ -218,6 +218,7 @@ vm_stack_growth (void *addr UNUSED) {
 
 	// thread_current()->stack_bottom = pg_round_down(addr);
 
+	/* page fault -> allocate and initialize just one page */
 	void *bottom_temp = pg_round_down(addr);
 
 	if (vm_alloc_page(VM_ANON | VM_MARKER_0, bottom_temp, 1)) {
@@ -226,14 +227,6 @@ vm_stack_growth (void *addr UNUSED) {
 
 	thread_current()->stack_bottom = bottom_temp;
 
-	/* page fault -> allocate and initialize just one page */
-	// uint64_t stk_addr = pg_round_down(addr);
-    // bool success = vm_alloc_page(VM_ANON | VM_MARKER_0, stk_addr, 1);
-    // if(success){
-    //     vm_claim_page(stk_addr);
-    // }
-
-    // thread_current()->stack_bottom -= PGSIZE;
 }
 
 /* Handle the fault on write_protected page */

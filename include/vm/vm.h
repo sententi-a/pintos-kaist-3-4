@@ -46,6 +46,7 @@ struct resource {
 	off_t offset;
 	size_t read_bytes;
 	size_t zero_bytes;
+	void *mmap_addr;
 };
 /*####################################################*/
 

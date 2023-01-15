@@ -201,8 +201,9 @@ syscall_handler (struct intr_frame *f) {
 			f->R.rax = mmap(f->R.rdi, f->R.rsi, f->R.rdx, f->R.r10, f->R.r8);
 			break;
 
-		// case SYS_MUNMAP:
-		// 	break;
+		case SYS_MUNMAP:
+			munmap(f->R.rdi);
+			break;
 
 		default:
 		 	exit (-1);
@@ -346,11 +347,11 @@ int read (int fd, void *buffer, unsigned length) {
 
 	// 버퍼에 무언가 써야하니까 그 버퍼로 대표되는 페이지가 writable한지 체크해야 함 
 	struct page *page = spt_find_page(spt, buffer);
-	if (!page->writable) {
+	if (!(page->writable)) {
 		exit(-1);
 	}
 
-	int bytes_read;
+	int bytes_read = 0;
 
 	/* Standard Input */
 	if (fd == STDIN_FILENO) {
@@ -536,11 +537,12 @@ void *mmap (void *addr, size_t length, int writable, int fd, off_t offset) {
 	/* check_address에서는 spt_find_page를 통해 allocated 여부를 따지기 때문에 사용하지 않는 게 맞는듯*/
 	// 아니면 check_address에 전달하는 인자를 바꾸면 됨
 	if (is_kernel_vaddr(addr)) {
-		exit(-1);
+		// exit(-1);
+		return NULL;
 	}
 	
 	/* If addr is 0 or addr is not page_aligned, it fails */
-	if (!addr || length <= 0) {
+	if (!addr || length <= 0 || addr != pg_round_down(addr)) {
 		return NULL;
 	}
 
@@ -555,12 +557,11 @@ void *mmap (void *addr, size_t length, int writable, int fd, off_t offset) {
 		return NULL;
 	}
 
-	void *va = do_mmap (addr, length, writable, file, offset);
+	return do_mmap (addr, length, writable, file, offset);
+}
 
-	if (!va) {
-		return NULL;
-	}
-
-	return va; 
+void munmap (void *addr) {
+	check_address (addr);
+	do_munmap (addr);
 }
 /*#######################################################################*/
