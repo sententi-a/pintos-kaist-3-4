@@ -218,16 +218,9 @@ void halt (void) {
 
 void exit (int status) {
 	struct thread *curr = thread_current ();
+	curr->exit_status = status;
 
-	/*##################Wait#####################*/
-	enum intr_level old_level = intr_disable ();
-	if (curr->body){
-		curr->body->exit_status = status;
-		curr->body->is_exit = 1;
-	}
-	intr_set_level(old_level);
-	/*############################################*/
-	printf("%s: exit(%d)\n", curr->name, status);
+	printf("%s: exit(%d)\n", curr->name, curr->exit_status);
 	thread_exit ();
 }
 
@@ -537,8 +530,8 @@ void *mmap (void *addr, size_t length, int writable, int fd, off_t offset) {
 	/* check_address에서는 spt_find_page를 통해 allocated 여부를 따지기 때문에 사용하지 않는 게 맞는듯*/
 	// 아니면 check_address에 전달하는 인자를 바꾸면 됨
 	if (is_kernel_vaddr(addr)) {
-		// exit(-1);
-		return NULL;
+		exit(-1);
+		//return NULL;
 	}
 	
 	/* If addr is 0 or addr is not page_aligned, it fails */
@@ -556,6 +549,11 @@ void *mmap (void *addr, size_t length, int writable, int fd, off_t offset) {
 	if (!file) {
 		return NULL;
 	}
+
+	/* Invalid offset */
+	// if (offset + length > file_length(file)) {
+	// 	
+	// }
 
 	return do_mmap (addr, length, writable, file, offset);
 }

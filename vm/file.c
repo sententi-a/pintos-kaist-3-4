@@ -125,12 +125,11 @@ do_mmap (void *addr, size_t length, int writable,
 		resource->read_bytes = page_read_bytes;
 		resource->zero_bytes = page_zero_bytes;
 		resource->mmap_addr = addr;
-		
+
 		/* If the range of pages mapped overlaps any existing set of mapped pages, 
 		including the stack or pages mapped at executable load time, it must fail */
 		if (!vm_alloc_page_with_initializer(VM_FILE, upage, 
 					writable, lazy_load_segment_file_backed, resource)) {
-			
 			free (resource);
 
 			while (upage != addr) {
@@ -175,6 +174,7 @@ do_munmap (void *addr) {
 		/* If the page is not mapped to a frame */
 		if (! (kaddr = pml4_get_page (pml4, uaddr))) {
 			spt_remove_page (spt, page);
+			uaddr += PGSIZE;
 			continue;
 		}
 
@@ -191,12 +191,6 @@ do_munmap (void *addr) {
 	}
 
 	return;
-	//pml4_clear_page 후 spt_remove_page도 해야할 듯 
-
-	/*You should use the file_reopen function 
-	to obtain a separate and independent reference 
-	to the file for each of its mappings.*/
-	// file_reopen();
 	
 }
 /*########################################################################################*/
