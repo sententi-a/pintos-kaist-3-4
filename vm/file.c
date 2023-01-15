@@ -105,12 +105,14 @@ do_mmap (void *addr, size_t length, int writable,
 	addr = pg_round_down (addr);
 
 	struct supplemental_page_table *spt = &thread_current()->spt;
+	/* Open and return a new file for same inode as 'file' */
+	struct file *new_file = file_reopen (file);
 
-	size_t read_bytes = length;
+
+	size_t read_bytes = length > file_length(file) ? file_length(file) : length;
 	size_t zero_bytes = read_bytes % PGSIZE == 0 ? 0 : pg_round_up(read_bytes) - read_bytes;
 
 	void *upage = addr;
-	// open했는데 파일 크기가 0이면 ?
 
 	/* Set up uninitialized pages */
 	while (read_bytes > 0 || zero_bytes > 0) {
@@ -118,7 +120,7 @@ do_mmap (void *addr, size_t length, int writable,
 		size_t page_zero_bytes = PGSIZE - page_read_bytes;
 
 		struct resource * resource = (struct resource *) malloc (sizeof(struct resource));
-		resource->file = file;
+		resource->file = new_file;
 		resource->offset = offset;
 		resource->read_bytes = page_read_bytes;
 		resource->zero_bytes = page_zero_bytes;
@@ -177,31 +179,15 @@ do_munmap (void *addr) {
 		}
 
 		/* If it's dirty */
-		else {
-			spt_remove_page(spt, page);
+		if (pml4_is_dirty (pml4, uaddr)) {
+			file_write_at(page->file.resource->file, kaddr, page->file.resource->read_bytes, page->file.resource->offset);
+			pml4_set_dirty(pml4, uaddr, false);
 		}
+		
+		pml4_clear_page (pml4, uaddr);
+		spt_remove_page (spt, page);
 
 		uaddr += PGSIZE;
-
-		/* If it's not dirty *
-		/
-		/* If page is modified by process, write it back to the file in the disk */
-		// if (pml4_is_dirty (pml4, uaddr)) {
-		// 	file_write_at ()
-		// 	/* If there's zeroing, just discard it */
-			
-		// 	// zero_bytes도 생각해야 함 
-		// 	// zero_bytes가 >0 이면, 그거 빼고 file_write? -> 그냥 read_bytes만큼씩 계속 write해주면 될듯
-		// 	//file_seek() 후 file_write() 해야 할듯 
-		// }
-
-		// /* If page is */
-		// else {
-
-		// }
-
-		// struct inode *inode = file->inode;
-		// struct inode *inode = backing_file->inode;
 	}
 
 	return;

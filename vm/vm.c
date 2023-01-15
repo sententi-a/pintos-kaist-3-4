@@ -440,7 +440,9 @@ supplemental_page_table_kill (struct supplemental_page_table *spt UNUSED) {
 
 	// 	struct page *page = hash_entry (e, struct page, hash_elem);
 
-	// 	destroy (page);
+	// 	if (page->operations->type == VM_FILE) {
+	// 		do_munmap (page->va);
+	// 	}
 	// }
 
 	// hash_clear나 hash_destroy를 써야 하나?
