@@ -17,6 +17,10 @@
 #include "userprog/process.h"
 #include "devices/input.h"
 #include "threads/palloc.h"
+/*#############Newly added in Project 3 ###############*/
+#include "vm/vm.h"
+/*####################################################*/
+
 
 void syscall_entry (void);
 void syscall_handler (struct intr_frame *);
@@ -45,7 +49,9 @@ void seek (int fd, unsigned position);
 unsigned tell (int fd);
 void close (int fd);
 
-void check_address (void *addr);
+void check_address_normal (void *addr);
+struct page *check_address(void *addr);
+void check_buffer(void *buffer, unsigned size, bool want_write);
 
 struct file *find_file_by_fd (int fd);
 void remove_file_from_fdt (int fd);
@@ -91,20 +97,43 @@ syscall_init (void) {
    1. addr is a null pointer
    2. *addr is not in user area
    3. page is not allocated */
-void check_address (void *addr) {
+void check_address_normal (void *addr) {
 	struct thread *curr = thread_current ();
-	// if (addr == NULL || ! is_user_vaddr (addr) || pml4_get_page (curr->pml4, addr) == NULL){
-	// 	exit(-1);
-	// }
-	if (addr == NULL || ! is_user_vaddr (addr) ) {
-		// printf("첫번째 케이스\n");
+
+	if (addr == NULL || ! is_user_vaddr (addr)) {
 		exit(-1);
 	}
-	// printf("중간이징ㄹ\n");
-	// if (pml4_get_page (curr->pml4, addr) == NULL) {
-	// 	printf("두번째 케이스\n");
-	// 	exit(-1);
-	// }
+	if (!spt_find_page (&curr->spt, addr)) {
+		exit(-1);
+	}
+}
+
+struct page *check_address(void *addr){
+	struct thread *curr = thread_current();
+
+	if (addr == NULL || is_kernel_vaddr(addr)){
+		exit(-1);
+	}
+	struct page *page = spt_find_page(&thread_current()->spt, addr);
+
+	if (!page){
+		exit(-1);
+	}
+	return page;
+}
+
+void check_buffer(void *buffer, unsigned size, bool want_write){
+	for (int i=0; i<size; i++){
+		struct page *page = check_address(buffer + i);
+		if (page == NULL){
+			exit(-1);
+		}
+		if (!want_write){
+			if(!page->writable){
+			exit(-1);
+			}
+		}
+	}
 }
 
 /* The main system call interface */
@@ -113,6 +142,9 @@ syscall_handler (struct intr_frame *f) {
 	/*##### Newly added in Project 2 #####*/
 	/*##### System Call #####*/
 	// TODO: Your implementation goes here.
+	/*#################Newly added in Project 3###################*/
+	thread_current()->stack_pointer = f->rsp;
+	/*############################################################*/
 
 	/* Copy system call arguments and call system call*/
 	//printf ("system call!\n");
@@ -160,10 +192,12 @@ syscall_handler (struct intr_frame *f) {
 			break;
 
 		case SYS_READ :
+			check_buffer(f->R.rsi, f->R.rdx, 0);
 			f->R.rax = read (f->R.rdi, f->R.rsi, f->R.rdx);
 			break;
 
 		case SYS_WRITE : 
+			check_buffer(f->R.rsi, f->R.rdx, 1);
 			f->R.rax = write (f->R.rdi, f->R.rsi, f->R.rdx);
 			break;
 
@@ -193,9 +227,16 @@ void halt (void) {
 /**/
 void exit (int status) {
 	struct thread *curr = thread_current ();
-	curr->exit_status = status;
 
-	printf("%s: exit(%d)\n", curr->name, curr->exit_status);
+	/*##################Wait#####################*/
+	enum intr_level old_level = intr_disable ();
+	if (curr->body){
+		curr->body->exit_status = status;
+		curr->body->is_exit = 1;
+	}
+	intr_set_level(old_level);
+	/*############################################*/
+	printf("%s: exit(%d)\n", curr->name, status);
 	thread_exit ();
 }
 
@@ -210,7 +251,7 @@ int wait (pid_t pid) {
    Parent calling exec should wait 
    until child process is created and loads the executable completely */
 int exec (const char *file) {
-	check_address (file);
+	check_address_normal (file);
 	int fn_size = strlen(file) + 1;
 	char *fn_copy = palloc_get_page(PAL_ZERO);
 
@@ -240,7 +281,7 @@ tid_t fork (const char *thread_name) {
 /* Create initial_size of file 
    Return true on success, false on failure (already exist / internal memory allocation fail)*/
 bool create (const char *file, unsigned initial_size) {
-	check_address (file);
+	check_address_normal (file);
 
 	lock_acquire (&filesys_lock);
 	bool success = filesys_create(file, initial_size);
@@ -254,7 +295,7 @@ bool create (const char *file, unsigned initial_size) {
    A file may be removed regardless of whether it is open or closed
    Removing an open file does not close it*/
 bool remove (const char *file) {
-	check_address (file);
+	check_address_normal (file);
 
 	lock_acquire (&filesys_lock);
 	bool success = filesys_remove (file);
@@ -269,7 +310,7 @@ bool remove (const char *file) {
    If file descriptor table is full, close the file
    */
 int open (const char *file) {
-	check_address (file);
+	check_address_normal (file);
 
 	lock_acquire (&filesys_lock);
 	/* Try to open file */
@@ -309,11 +350,6 @@ int filesize (int fd) {
    If fd is 0, it reads from the keyboard using input_getc() 
 */
 int read (int fd, void *buffer, unsigned length) {
-	// printf("check_address 전 \n");
-	check_address (buffer);
-	// printf("check_address 후 \n");
-	//check_address (buffer + length - 1);
-
 	int bytes_read;
 
 	/* Standard Input */
@@ -359,8 +395,7 @@ int read (int fd, void *buffer, unsigned length) {
    If fd is 1, it writes to the console using putbuf()
 */
 int write (int fd, const void *buffer, unsigned length) {
-	check_address (buffer);
-	//check_address (buffer + length -1);
+	// check_address (buffer);
 
 	int bytes_written;
 
