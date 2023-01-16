@@ -153,6 +153,10 @@ spt_insert_page (struct supplemental_page_table *spt UNUSED,
 
 void
 spt_remove_page (struct supplemental_page_table *spt, struct page *page) {
+	/*####################Newly added in Project 3#########################*/
+	/*-------------------------Memory Mapped Files-------------------------*/
+	list_remove (&page->hash_elem.list_elem);
+	/*#####################################################################*/
 	vm_dealloc_page (page);
 	return true;
 }
@@ -475,7 +479,7 @@ page_less (const struct hash_elem *a_,
 void
 page_destroy (struct hash_elem *e, void *aux) {
 	struct page *page = hash_entry(e, struct page, hash_elem);
-	spt_remove_page (&thread_current()->spt, page);
-	//vm_dealloc_page(page);
+	//spt_remove_page (&thread_current()->spt, page);
+	vm_dealloc_page(page);
 }
 /*################################################################*/

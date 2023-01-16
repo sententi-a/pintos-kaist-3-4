@@ -239,8 +239,8 @@ __do_fork (void *aux) {
 	curr->next_fd = parent->next_fd;
 	/* After duplicate file, wake parent process up */
 	sema_up (&curr->fork_sema);
-
 	if_.R.rax = 0; /* Child process returns 0 */
+
 	/*########################################################*/
 
 	//process_init ();
@@ -827,8 +827,8 @@ lazy_load_segment (struct page *page, void *aux) {
 	/* zeroing */
 	memset(kpage + resource->read_bytes, 0, resource->zero_bytes);
 	
-	// 할 일을 마쳤으니 free 시켜도 되지 않을까
-	free(resource);
+	// 할 일을 마쳤으니 free 시켜도 되지 않을까 -> 그러면 fork-read 터짐
+	//free(resource);
 
 	return true;
 	/*######################################################################*/
@@ -878,8 +878,6 @@ load_segment (struct file *file, off_t ofs, uint8_t *upage,
 		if (!vm_alloc_page_with_initializer (VM_ANON, upage,
 					writable, lazy_load_segment, aux))
 			return false;
-
-		//free(resource);
 
 		/* Advance. */
 		/*#########################Newly added in Project 3#############################*/

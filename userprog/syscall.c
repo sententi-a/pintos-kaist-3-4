@@ -250,7 +250,6 @@ int exec (const char *file) {
 		return -1;
 	}
 
-	// NOT_REACHED (); /* 이건 왜 넣는 건지....? */
 	return 0; 
 }
 
@@ -420,7 +419,6 @@ int write (int fd, const void *buffer, unsigned length) {
 		
 		return bytes_written;
 	}
-	//return bytes_written;
 }
 
 /* Sets the current position in file to position bytes from the 
@@ -469,9 +467,9 @@ void close (int fd) {
 	if (fd <= 1 || close_file <= 2) 
 		return;
 
-	//lock_acquire (&filesys_lock);
+	// lock_acquire (&filesys_lock);
 	file_close (close_file);
-	//lock_release (&filesys_lock);
+	// lock_release (&filesys_lock);
 }
 
 /*Helper Functions*/
@@ -535,6 +533,11 @@ void *mmap (void *addr, size_t length, int writable, int fd, off_t offset) {
 	
 	/* If addr is 0 or addr / offset is not page_aligned, it fails */
 	if (!addr || addr != pg_round_down(addr) || offset != pg_round_down(offset)) {
+		return NULL;
+	}
+
+	/* If length is 0, it fails */
+	if (length == 0) {
 		return NULL;
 	}
 

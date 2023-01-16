@@ -64,10 +64,18 @@ file_backed_swap_out (struct page *page) {
 static void
 file_backed_destroy (struct page *page) {
 	struct file_page *file_page UNUSED = &page->file;
-	/*###################Newly added in Project3##################*/
-	/*--------------------Memory Mapped Files---------------------*/
-	// free(file_page->resource);
-	/*############################################################*/
+	/*############################Newly added in Project3##############################*/
+	/*--------------------------------Memory Mapped Files------------------------------*/
+	uint64_t *pml4 = thread_current()->pml4;
+	if (pml4_is_dirty (pml4, page->va)) {
+		file_write_at(page->file.resource->file, page->frame->kva, page->file.resource->read_bytes, page->file.resource->offset);
+		pml4_set_dirty(pml4, page->va, false);
+	}
+	
+	free (page->file.resource);
+	
+	pml4_clear_page (pml4, page->va);
+	/*###################################################################################*/
 }
 
 /*###############################Newly added in Project 3################################*/
@@ -143,7 +151,8 @@ do_mmap (void *addr, size_t length, int writable,
 		read_bytes -= page_read_bytes;
 		zero_bytes -= page_zero_bytes;
 		upage += PGSIZE;
-		
+
+		/* Kernel Space */
 		if (is_kernel_vaddr (upage)) {
 			return NULL;
 		}
@@ -174,23 +183,27 @@ do_munmap (void *addr) {
 			break;
 		}
 
-		/* If the page is not mapped to a frame */
-		if (! (kaddr = pml4_get_page (pml4, uaddr))) {
-			spt_remove_page (spt, page);
-			uaddr += PGSIZE;
-			continue;
-		}
 
-		/* If it's dirty */
-		if (pml4_is_dirty (pml4, uaddr)) {
-			file_write_at(page->file.resource->file, kaddr, page->file.resource->read_bytes, page->file.resource->offset);
-			pml4_set_dirty(pml4, uaddr, false);
-		}
-		
-		pml4_clear_page (pml4, uaddr);
 		spt_remove_page (spt, page);
-
 		uaddr += PGSIZE;
+
+		// /* If the page is not mapped to a frame */
+		// if (! (kaddr = pml4_get_page (pml4, uaddr))) {
+		// 	spt_remove_page (spt, page);
+		// 	uaddr += PGSIZE;
+		// 	continue;
+		// }
+
+		// /* If it's dirty */
+		// if (pml4_is_dirty (pml4, uaddr)) {
+		// 	file_write_at(page->file.resource->file, kaddr, page->file.resource->read_bytes, page->file.resource->offset);
+		// 	pml4_set_dirty(pml4, uaddr, false);
+		// }
+		
+		// pml4_clear_page (pml4, uaddr);
+		// spt_remove_page (spt, page);
+
+		// uaddr += PGSIZE;
 	}
 
 	return;
