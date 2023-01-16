@@ -85,6 +85,36 @@ initd (void *f_name) {
 /*---------------------------Process System Call-----------------------------*/
 /* Clones the current process as `name`. Returns the new process's thread id, or
  * TID_ERROR if the thread cannot be created. */
+// tid_t
+// process_fork (const char *name, struct intr_frame *if_ UNUSED) {
+// 	/*##############Newly added in Project 2##############*/
+// 	/*------------------Process System Call----------------*/	
+// 	struct thread *curr = thread_current ();
+	
+// 	/* Copies parent's resources */
+// 	memcpy (&curr->if_, if_, sizeof(struct intr_frame)); 
+
+// 	/* Create Child Process doing __do_fork*/
+// 	tid_t tid = thread_create (name, PRI_DEFAULT, __do_fork, curr); 
+
+// 	/* If thread create fails...*/
+// 	if (tid == TID_ERROR) {
+// 		return TID_ERROR;
+// 	}
+
+// 	/* Wait for child's exit */
+// 	struct thread *child = find_child_process (tid);
+// 	sema_down (&child->fork_sema); /* Wait child */
+	
+// 	/* Child exits with -1, return TID_ERROR*/
+// 	if (child->exit_status == -1) {
+// 		return TID_ERROR;
+// 	}
+
+// 	return tid;
+// 	/*#####################################################*/
+// }
+/*######################Wait Refactoring#######################*/
 tid_t
 process_fork (const char *name, struct intr_frame *if_ UNUSED) {
 	/*##############Newly added in Project 2##############*/
@@ -103,17 +133,18 @@ process_fork (const char *name, struct intr_frame *if_ UNUSED) {
 	}
 
 	/* Wait for child's exit */
-	struct thread *child = find_child_process (tid);
-	sema_down (&child->fork_sema); /* Wait child */
+	struct body *child_body = find_child_process (tid);
+	sema_down (&child_body->self->fork_sema); /* Wait child */
 	
 	/* Child exits with -1, return TID_ERROR*/
-	if (child->exit_status == -1) {
+	if (child_body->exit_status == -1) {
 		return TID_ERROR;
 	}
 
 	return tid;
 	/*#####################################################*/
 }
+/*#############################################################*/
 
 #ifndef VM
 /* Duplicate the parent's address space by passing this function to the
@@ -251,7 +282,8 @@ __do_fork (void *aux) {
 error:
 	/*################Newly added in Project 2################*/
 	/*------------------Process System Call-----------------*/
-	curr->exit_status = TID_ERROR;
+	// curr->exit_status = TID_ERROR;
+	curr->body->exit_status = TID_ERROR;
 	sema_up (&curr->fork_sema);
 	exit (TID_ERROR);
 	/*########################################################*/
@@ -305,25 +337,53 @@ process_exec (void *f_name) {
  *
  * This function will be implemented in problem 2-2.  For now, it
  * does nothing. */
+// int
+// process_wait (tid_t child_tid UNUSED) {
+// 	/* XXX: Hint) The pintos exit if process_wait (initd), we recommend you
+// 	 * XXX:       to add infinite loop here before
+// 	 * XXX:       implementing the process_wait. */
+// 	/*#####################Newly added in Project 2#####################*/
+// 	/*-------------------------Argument Passing--------------------------*/
+// 	// for (int i = 0; i < 1000000000; i++)
+// 	// {;}
+// 	/*####################################################################*/
+
+// 	/*#####################Newly added in Project 2#####################*/
+// 	/*-----------------------Process System Call------------------------*/
+// 	/* Find child process (chlid_tid), if not, return NULL */
+// 	struct thread *curr = thread_current ();
+// 	struct thread *child = find_child_process (child_tid);
+	
+// 	/* If pid does not refer to a direct child of a calling process */
+// 	if (child == NULL) {
+// 		return -1;
+// 	}
+
+// 	/* If the process that calls wait has already called wait on pid */
+// 	//return -1 
+
+// 	/* Wait for the child process 
+// 	   Parent process sleeps ... zzzz */
+// 	sema_down (&child->wait_sema); 
+// 	int child_exit_status = child->exit_status;
+// 	list_remove (&child->child_elem); 
+// 	sema_up (&child->reap_sema); 
+// 	// printf("exit 코드 %d\n", child_exit_status);
+// 	return child_exit_status;
+// 	/*####################################################################*/
+// }
+
+/*##########################Wait Refactoring##############################*/
 int
 process_wait (tid_t child_tid UNUSED) {
-	/* XXX: Hint) The pintos exit if process_wait (initd), we recommend you
-	 * XXX:       to add infinite loop here before
-	 * XXX:       implementing the process_wait. */
-	/*#####################Newly added in Project 2#####################*/
-	/*-------------------------Argument Passing--------------------------*/
-	// for (int i = 0; i < 1000000000; i++)
-	// {;}
-	/*####################################################################*/
-
 	/*#####################Newly added in Project 2#####################*/
 	/*-----------------------Process System Call------------------------*/
 	/* Find child process (chlid_tid), if not, return NULL */
 	struct thread *curr = thread_current ();
-	struct thread *child = find_child_process (child_tid);
+	struct body *child_body = find_child_process (child_tid);
 	
 	/* If pid does not refer to a direct child of a calling process */
-	if (child == NULL) {
+	if (child_body == NULL) {
 		return -1;
 	}
 
@@ -332,16 +392,71 @@ process_wait (tid_t child_tid UNUSED) {
 
 	/* Wait for the child process 
 	   Parent process sleeps ... zzzz */
-	sema_down (&child->wait_sema); 
-	int child_exit_status = child->exit_status;
-	list_remove (&child->child_elem); 
-	sema_up (&child->reap_sema); 
-	// printf("exit 코드 %d\n", child_exit_status);
+	sema_down (&child_body->wait_sema); 
+	int child_exit_status = child_body->exit_status;
+	list_remove (&child_body->child_elem); 
+	free(child_body); 
+
 	return child_exit_status;
 	/*####################################################################*/
 }
 
+void 
+sema_up_new (void) {
+	struct thread *curr = thread_current();
+
+	enum intr_level old_level = intr_disable ();
+
+	if (!curr->body) {
+		intr_set_level (old_level);
+		return;
+	}
+
+	if (!list_empty (&curr->body->wait_sema.waiters)) {
+		list_sort (&curr->body->wait_sema.waiters, &cmp_priority, NULL);
+		thread_unblock (list_entry (list_pop_front (&curr->body->wait_sema.waiters), struct thread, elem));
+	}
+
+	curr->body->wait_sema.value++;
+	test_max_priority ();
+
+	intr_set_level (old_level);
+}
+/*########################################################################*/
+
 /* Exit the process. This function is called by thread_exit (). */
+// void
+// process_exit (void) {
+// 	struct thread *curr = thread_current ();
+// 	/*#########################Newly added in Project 2##############################*/
+// 	/* TODO: Your code goes here.
+// 	 * TODO: Implement process termination message (see
+// 	 * TODO: project2/process_termination.html).
+// 	 * TODO: We recommend you to implement process resource cleanup here. */
+// 	/*-----------------------------Process System Call-------------------------------*/
+	
+// 	/*------------------------------File System Call--------------------------------*/
+// 	/* Close all the open file in FDT */
+// 	for (int i = 0; i < FDCOUNT_LIMIT; i++) {
+// 			close (i);
+// 	}
+	
+// 	/* Deallocate File Descriptor Table */
+// 	// palloc_free_page (curr->fdt);
+// 	palloc_free_multiple (curr->fdt, FDT_PAGES);
+// 	file_close (curr->running);
+// 	/*################################################################################*/
+
+// 	/*#########################Newly added in Project 2##############################*/
+// 	/*-----------------------------Process System Call-------------------------------*/
+// 	sema_up (&curr->wait_sema); /* wake waiting parent up */
+// 	sema_down (&curr->reap_sema); /* wait for parent process reaping */
+// 	/*################################################################################*/
+
+// 	process_cleanup ();
+// }
+
+/*##########################Wait Refactoring##############################*/
 void
 process_exit (void) {
 	struct thread *curr = thread_current ();
@@ -366,13 +481,29 @@ process_exit (void) {
 
 	/*#########################Newly added in Project 2##############################*/
 	/*-----------------------------Process System Call-------------------------------*/
-	sema_up (&curr->wait_sema); /* wake waiting parent up */
-	sema_down (&curr->reap_sema); /* wait for parent process reaping */
+	// sema_up (&curr->wait_sema); /* wake waiting parent up */
+	// sema_down (&curr->reap_sema); /* wait for parent process reaping */
+	/*-----------------------------------------------------------*/
+	sema_up_new();
+	struct list_elem *child_e = list_begin (&curr->children);
+
+	while (child_e != list_end(&curr->children)) {
+		enum intr_level old_level = intr_disable();
+		struct body *child_body = list_entry (child_e, struct body, child_elem);
+
+		if (child_body->is_exit == 0) {
+			child_body->self->body = NULL;
+		}
+		intr_set_level(old_level);
+
+		child_e = list_remove(child_e);
+		free(child_body);
+	}
 	/*################################################################################*/
 
 	process_cleanup ();
 }
-
+/*################################################################################*/
 
 /* Free the current process's resources. */
 static void

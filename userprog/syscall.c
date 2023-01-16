@@ -104,22 +104,15 @@ syscall_init (void) {
    3. page is not allocated */
 void check_address (void *addr) {
 	struct thread *curr = thread_current ();
-	// if (addr == NULL || ! is_user_vaddr (addr) || pml4_get_page (curr->pml4, addr) == NULL){
-	// 	exit(-1);
-	// }
+
 	if (addr == NULL || ! is_user_vaddr (addr)) {
-		// printf("첫번째 케이스\n");
 		exit(-1);
 	}
 
 	if (!spt_find_page (&curr->spt, addr)) {
 		exit(-1);
 	}
-	// printf("중간이징ㄹ\n");
-	// if (pml4_get_page (curr->pml4, addr) == NULL) {
-	// 	printf("두번째 케이스\n");
-	// 	exit(-1);
-	// }
+
 }
 
 /* The main system call interface */
@@ -216,13 +209,28 @@ void halt (void) {
 	power_off ();
 }
 
+// void exit (int status) {
+// 	struct thread *curr = thread_current ();
+// 	curr->exit_status = status;
+
+// 	printf("%s: exit(%d)\n", curr->name, curr->exit_status);
+// 	thread_exit ();
+// }
+
+/*######################Wait Refactoring#########################*/
 void exit (int status) {
 	struct thread *curr = thread_current ();
-	curr->exit_status = status;
 
-	printf("%s: exit(%d)\n", curr->name, curr->exit_status);
+	enum intr_level old_level = intr_disable ();
+	if (curr->body){
+		curr->body->exit_status = status;
+		curr->body->is_exit = 1;
+	}
+	intr_set_level(old_level);
+	printf("%s: exit(%d)\n", curr->name, status);
 	thread_exit ();
 }
+/*##############################################################*/
 
 /* Waits for thread TID / process PID to die and returns its exit status */
 int wait (pid_t pid) {
@@ -252,7 +260,6 @@ int exec (const char *file) {
 
 	return 0; 
 }
-
 
 tid_t fork (const char *thread_name) {
 	return process_fork (thread_name, &thread_current ()->if_);
