@@ -101,7 +101,7 @@ lazy_load_segment_file_backed (struct page *page, void *aux) {
 void *
 do_mmap (void *addr, size_t length, int writable,
 		struct file *file, off_t offset) {
-	
+
 	addr = pg_round_down (addr);
 
 	struct supplemental_page_table *spt = &thread_current()->spt;
@@ -139,11 +139,14 @@ do_mmap (void *addr, size_t length, int writable,
 		
 			return NULL;
 		}
-
 		offset += page_read_bytes;
 		read_bytes -= page_read_bytes;
 		zero_bytes -= page_zero_bytes;
 		upage += PGSIZE;
+		
+		if (is_kernel_vaddr (upage)) {
+			return NULL;
+		}
 	}
 
 	/* If successful, returns the virtual address where the file is mapped */

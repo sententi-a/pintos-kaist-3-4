@@ -530,12 +530,11 @@ void *mmap (void *addr, size_t length, int writable, int fd, off_t offset) {
 	/* check_address에서는 spt_find_page를 통해 allocated 여부를 따지기 때문에 사용하지 않는 게 맞는듯*/
 	// 아니면 check_address에 전달하는 인자를 바꾸면 됨
 	if (is_kernel_vaddr(addr)) {
-		exit(-1);
-		//return NULL;
+		return NULL;
 	}
 	
-	/* If addr is 0 or addr is not page_aligned, it fails */
-	if (!addr || length <= 0 || addr != pg_round_down(addr)) {
+	/* If addr is 0 or addr / offset is not page_aligned, it fails */
+	if (!addr || addr != pg_round_down(addr) || offset != pg_round_down(offset)) {
 		return NULL;
 	}
 
@@ -549,11 +548,6 @@ void *mmap (void *addr, size_t length, int writable, int fd, off_t offset) {
 	if (!file) {
 		return NULL;
 	}
-
-	/* Invalid offset */
-	// if (offset + length > file_length(file)) {
-	// 	
-	// }
 
 	return do_mmap (addr, length, writable, file, offset);
 }

@@ -336,7 +336,7 @@ process_wait (tid_t child_tid UNUSED) {
 	int child_exit_status = child->exit_status;
 	list_remove (&child->child_elem); 
 	sema_up (&child->reap_sema); 
-
+	// printf("exit 코드 %d\n", child_exit_status);
 	return child_exit_status;
 	/*####################################################################*/
 }
